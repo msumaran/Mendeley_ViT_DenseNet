@@ -1,0 +1,72 @@
+=== mobilenetv3_small_100 ===
+  mobilenetv3_small_100 fold 1/5: acc=93.12 f1=93.12 auc=97.97
+  mobilenetv3_small_100 fold 2/5: acc=89.12 f1=89.12 auc=96.35
+  mobilenetv3_small_100 fold 3/5: acc=90.50 f1=90.50 auc=97.35
+  mobilenetv3_small_100 fold 4/5: acc=90.56 f1=90.56 auc=97.18
+  mobilenetv3_small_100 fold 5/5: acc=90.00 f1=90.00 auc=96.56
+  mobilenetv3_small_100 POOLED: acc=90.66 f1=90.66 auc=97.06
+=== efficientnet_lite0 ===
+  efficientnet_lite0 fold 1/5: acc=92.62 f1=92.62 auc=98.11
+  efficientnet_lite0 fold 2/5: acc=90.06 f1=90.06 auc=96.67
+  efficientnet_lite0 fold 3/5: acc=89.44 f1=89.44 auc=96.19
+  efficientnet_lite0 fold 4/5: acc=92.25 f1=92.25 auc=97.42
+  efficientnet_lite0 fold 5/5: acc=90.75 f1=90.75 auc=96.53
+  efficientnet_lite0 POOLED: acc=91.02 f1=91.02 auc=97.00
+=== vit_base_patch16_224 ===
+  vit_base_patch16_224 fold 1/5: acc=97.31 f1=97.31 auc=99.10
+  vit_base_patch16_224 fold 2/5: acc=96.56 f1=96.56 auc=99.13
+  vit_base_patch16_224 fold 3/5: acc=96.94 f1=96.94 auc=98.78
+  vit_base_patch16_224 fold 4/5: acc=96.87 f1=96.87 auc=98.77
+  vit_base_patch16_224 fold 5/5: acc=97.12 f1=97.12 auc=99.25
+  vit_base_patch16_224 POOLED: acc=96.96 f1=96.96 auc=99.00
+=== efficientnet_b0 ===
+  efficientnet_b0 fold 1/5: acc=95.06 f1=95.06 auc=98.89
+  efficientnet_b0 fold 2/5: acc=93.50 f1=93.50 auc=98.40
+  efficientnet_b0 fold 3/5: acc=93.94 f1=93.94 auc=98.41
+  efficientnet_b0 fold 4/5: acc=94.50 f1=94.50 auc=98.53
+  efficientnet_b0 fold 5/5: acc=94.37 f1=94.37 auc=98.73
+  efficientnet_b0 POOLED: acc=94.27 f1=94.27 auc=98.59
+=== mobilenetv2_100 ===
+  mobilenetv2_100 fold 1/5: acc=89.19 f1=89.18 auc=96.42
+  mobilenetv2_100 fold 2/5: acc=88.94 f1=88.94 auc=95.57
+  mobilenetv2_100 fold 3/5: acc=89.19 f1=89.19 auc=96.18
+  mobilenetv2_100 fold 4/5: acc=88.81 f1=88.81 auc=95.71
+  mobilenetv2_100 fold 5/5: acc=88.94 f1=88.94 auc=95.78
+  mobilenetv2_100 POOLED: acc=89.01 f1=89.01 auc=95.91
+=== densenet121 ===
+  densenet121 fold 1/5: acc=96.00 f1=96.00 auc=99.24
+  densenet121 fold 2/5: acc=94.31 f1=94.31 auc=98.61
+  densenet121 fold 3/5: acc=96.37 f1=96.37 auc=99.15
+  densenet121 fold 4/5: acc=95.75 f1=95.75 auc=99.01
+  densenet121 fold 5/5: acc=95.87 f1=95.87 auc=99.29
+  densenet121 POOLED: acc=95.66 f1=95.66 auc=99.06
+=== resnet50 ===
+  resnet50 fold 1/5: acc=89.75 f1=89.75 auc=96.47
+  resnet50 fold 2/5: acc=89.12 f1=89.12 auc=95.80
+  resnet50 fold 3/5: acc=90.19 f1=90.19 auc=96.30
+  resnet50 fold 4/5: acc=87.69 f1=87.68 auc=95.60
+  resnet50 fold 5/5: acc=88.56 f1=88.56 auc=95.63
+  resnet50 POOLED: acc=89.06 f1=89.06 auc=95.93
+=== mobilenetv1_100 ===
+  mobilenetv1_100 fold 1/5: acc=90.50 f1=90.50 auc=96.34
+  mobilenetv1_100 fold 2/5: acc=86.56 f1=86.56 auc=94.05
+  mobilenetv1_100 fold 3/5: acc=90.44 f1=90.44 auc=96.77
+  mobilenetv1_100 fold 4/5: acc=89.06 f1=89.06 auc=95.48
+  mobilenetv1_100 fold 5/5: acc=88.44 f1=88.43 auc=95.22
+  mobilenetv1_100 POOLED: acc=89.00 f1=89.00 auc=95.56
+=== swin_base_patch4_window7_224 ===
+  swin_base_patch4_window7_224 fold 1/5: acc=96.44 f1=96.44 auc=99.13
+  swin_base_patch4_window7_224 fold 2/5: acc=94.62 f1=94.62 auc=98.66
+  swin_base_patch4_window7_224 fold 3/5: acc=95.94 f1=95.94 auc=98.73
+  swin_base_patch4_window7_224 fold 4/5: acc=94.81 f1=94.81 auc=98.57
+  swin_base_patch4_window7_224 fold 5/5: acc=96.00 f1=96.00 auc=99.23
+  swin_base_patch4_window7_224 POOLED: acc=95.56 f1=95.56 auc=98.89
+=== vit_small_patch14_dinov2 ===
+  vit_small_patch14_dinov2 fold 1/5: acc=96.69 f1=96.69 auc=99.29
+  vit_small_patch14_dinov2 fold 2/5: acc=94.94 f1=94.94 auc=98.73
+  vit_small_patch14_dinov2 fold 3/5: acc=95.50 f1=95.50 auc=98.72
+  vit_small_patch14_dinov2 fold 4/5: acc=95.19 f1=95.19 auc=98.13
+  vit_small_patch14_dinov2 fold 5/5: acc=94.87 f1=94.87 auc=98.19
+  vit_small_patch14_dinov2 POOLED: acc=95.44 f1=95.44 auc=98.60
+
+Guardado en results_freshness_v3/reportes/dnc_5fold_confmat_roc/
