@@ -22,8 +22,7 @@ DenseNet-121 resaltados como elegidos.
 Justificación cuantitativa de por qué estos 2 (F1, AUC, estabilidad, eficiencia) en la
 sección "Por qué ViT-Base/16 y DenseNet-121" de ese mismo documento, y en detalle en
 [`6_documentacion/Sustento_Seleccion_Modelos.docx`](6_documentacion/Sustento_Seleccion_Modelos.docx)
-(documento previo que sustentaba una selección de 3 modelos — ViT-Base/16, Swin-Base y
-DenseNet-121 — con los mismos criterios).
+(actualizado a la selección vigente de 2 modelos, con los mismos criterios).
 
 ## Contenido
 
@@ -34,7 +33,7 @@ DenseNet-121 — con los mismos criterios).
 | `3_resultados_test_por_modelo/` | Matrices de confusión y curvas ROC (por fold y pooled) de cada uno de los 10 modelos, más `metricas_pooled_por_modelo.csv` y `metricas_por_fold.csv` |
 | `4_graficas/` | Gráficas agregadas: área bajo curva, curvas ROC, matrices de confusión de los 10 modelos |
 | `5_graficas_informe/` | Gráficas usadas en el informe (AUC, F1 y estabilidad, parámetros vs. F1, precisión vs. recall) |
-| `6_documentacion/` | `Documentacion_Tecnica_10_Modelos.docx` (detalle completo por epoch/fold) y `Sustento_Seleccion_Modelos.docx` (criterios de selección, versión de 3 modelos) |
+| `6_documentacion/` | `Documentacion_Tecnica_10_Modelos.docx` (detalle completo por epoch/fold) y `Sustento_Seleccion_Modelos.docx` (criterios de selección de los 2 modelos elegidos) |
 | `7_graficas_por_modelo/` | Matrices de confusión, curvas ROC y curvas de épocas, una por modelo, para los 10 modelos |
 
 ## Entrenamiento y evaluación
