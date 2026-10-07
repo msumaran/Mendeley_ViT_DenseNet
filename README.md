@@ -5,6 +5,29 @@ Mendeley) — 8,000 imágenes balanceadas (4,000 fresco / 4,000 no_fresco), toda
 especies. Es el dominio **fuente** de todo el proyecto (los checkpoints resultantes se
 usan como punto de partida en los experimentos cross-dataset de Trucha/Rohu).
 
+## Resultados generales (5-fold, test pooled = 8,000 img)
+
+Ordenado por F1. F1 por fold = media ± std (n=5 folds, ddof=1). Fuente:
+`3_resultados_test_por_modelo/metricas_pooled_por_modelo.csv` y `metricas_por_fold.csv`.
+**Negrita** = los 2 modelos de la selección vigente.
+
+| Modelo | Accuracy (%) | F1 pooled (%) | F1 por fold (%) | AUC |
+|---|---|---|---|---|
+| **ViT-Base/16** | 96.96 | 96.96 | 96.96 ± 0.28 | 0.9900 |
+| **DenseNet-121** | 95.66 | 95.66 | 95.66 ± 0.79 | 0.9906 |
+| Swin-Base | 95.56 | 95.56 | 95.56 ± 0.80 | 0.9889 |
+| DINOv2 ViT-S/14 | 95.44 | 95.44 | 95.44 ± 0.74 | 0.9860 |
+| EfficientNet-B0 | 94.27 | 94.27 | 94.27 ± 0.59 | 0.9859 |
+| EfficientNet-Lite0 | 91.02 | 91.02 | 91.02 ± 1.38 | 0.9700 |
+| MobileNetV3-Small | 90.66 | 90.66 | 90.66 ± 1.49 | 0.9706 |
+| ResNet-50 | 89.06 | 89.06 | 89.06 ± 0.99 | 0.9593 |
+| MobileNetV2 | 89.01 | 89.01 | 89.01 ± 0.17 | 0.9591 |
+| MobileNetV1 | 89.00 | 89.00 | 89.00 ± 1.63 | 0.9556 |
+
+- ViT-Base/16 tiene el mayor F1 (96.96%) y DenseNet-121 el mayor AUC (0.9906).
+- Los 4 mejores quedan entre 95.4% y 97.0% de F1; los 6 restantes, entre 89.0% y 94.3%.
+- Dataset balanceado, por eso accuracy ≈ F1 ≈ recall ≈ especificidad.
+
 ## Selección de modelos — cambio respecto a la versión anterior
 
 El proyecto trabajaba con **4 modelos** elegidos de Mendeley: ViT-Base/16, Swin-Base,
