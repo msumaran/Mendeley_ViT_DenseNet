@@ -51,12 +51,12 @@ sección "Por qué ViT-Base/16 y DenseNet-121" de ese mismo documento, y en deta
 
 | Carpeta | Contenido |
 |---|---|
-| `1_codigo/` | `config.py`, `dataset_freshness.py`, `dnc_5fold_confmat_roc.py`, `dnc_5fold_full_metrics.py`, `dnc_graficas_organizadas.py`, `metrics.py`, `models.py`, `run_freshness_v3.py` — utilidades compartidas y scripts de entrenamiento/evaluación de los 10 modelos |
+| `1_codigo/` | `config.py`, `dataset_freshness.py`, `dnc_5fold_confmat_roc.py`, `dnc_5fold_full_metrics.py`, `dnc_graficas_organizadas.py`, `metrics.py`, `models.py`, `run_freshness_v3.py`, `generar_flujo_metodologico.py` — utilidades compartidas y scripts de entrenamiento/evaluación de los 10 modelos |
 | `2_logs_entrenamiento/` | Logs de la corrida de entrenamiento (5-fold) y de la generación de matrices de confusión/ROC de los 10 modelos |
 | `3_resultados_test_por_modelo/` | Matrices de confusión y curvas ROC (por fold y pooled) de cada uno de los 10 modelos, más `metricas_pooled_por_modelo.csv` y `metricas_por_fold.csv` |
 | `4_graficas/` | Gráficas agregadas: área bajo curva, curvas ROC, matrices de confusión de los 10 modelos |
 | `5_graficas_informe/` | Gráficas usadas en el informe (AUC, F1 y estabilidad, parámetros vs. F1, precisión vs. recall) |
-| `6_documentacion/` | `Documentacion_Tecnica_10_Modelos.docx` (detalle completo por epoch/fold) y `Sustento_Seleccion_Modelos.docx` (criterios de selección de los 2 modelos elegidos) |
+| `6_documentacion/` | `Documentacion_Tecnica_10_Modelos.docx` (detalle completo por epoch/fold), `Sustento_Seleccion_Modelos.docx` (criterios de selección de los 2 modelos elegidos) y `Flujo_Metodologico_Capitulo_III.docx` (borrador del Capítulo III, generado con `1_codigo/generar_flujo_metodologico.py`) |
 | `7_graficas_por_modelo/` | Matrices de confusión, curvas ROC y curvas de épocas, una por modelo, para los 10 modelos |
 
 ## Entrenamiento y evaluación
