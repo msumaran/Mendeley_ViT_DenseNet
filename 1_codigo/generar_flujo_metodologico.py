@@ -1,69 +1,209 @@
-"""Genera el borrador del Capitulo III (Flujo metodologico de la evaluacion de
-los 10 modelos base) como .docx, incluida la Figura 1 (diagrama del flujo).
+"""Genera el Capitulo III (Evaluacion de Modelos Base) como .docx, con la
+estructura 3.1-3.9, la Figura 3.1 (flujo del capitulo) y la Tabla 3.1
+(correspondencia con el metodo de investigacion).
 
-Todas las cifras del texto provienen de 3_resultados_test_por_modelo/
-(metricas_pooled_por_modelo.csv, metricas_por_fold.csv y las matrices pooled)
-y los hiperparametros de V3_CFG en run_freshness_v3.py.
+Fuentes de las cifras:
+  - Intra-dataset (Mendeley, 10 modelos): 3_resultados_test_por_modelo/
+    metricas_pooled_por_modelo.csv y metricas_por_fold.csv (se leen aqui).
+  - Hiperparametros: V3_CFG en run_freshness_v3.py.
+  - Cross-dataset (Trucha, Rohu; metodo congelado, sin x2): repositorio
+    Generalizacion_ViT_DenseNet (3_resultados/, Documentacion_Tecnica_ViT_DenseNet.docx,
+    Indicadores_Robustez_TRD_Gap_RBE.docx) -- copiadas en CROSS_DATASET abajo
+    porque esos CSV viven en otro repositorio.
 
 Uso (desde la raiz del repo; requiere python-docx y matplotlib):
     python 1_codigo/generar_flujo_metodologico.py
 Salida: 6_documentacion/Flujo_Metodologico_Capitulo_III.docx
-        5_graficas_informe/flujo_metodologico.png (Figura 1 suelta)
+        5_graficas_informe/flujo_metodologico.png (Figura 3.1 suelta)
 """
+import csv
 import io
+import statistics
+import textwrap
 
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch
 from docx import Document
+from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
 from docx.shared import Cm, Pt
 
 OUT = "6_documentacion/Flujo_Metodologico_Capitulo_III.docx"
 FIG_OUT = "5_graficas_informe/flujo_metodologico.png"
+CSV_POOLED = "3_resultados_test_por_modelo/metricas_pooled_por_modelo.csv"
+CSV_FOLDS = "3_resultados_test_por_modelo/metricas_por_fold.csv"
 
-ETAPAS_FIGURA = [
-    ("1. Preparación del conjunto de datos",
-     "DNC: 8,000 imágenes balanceadas\n4,000 fresco / 4,000 no_fresco"),
-    ("2. Validación cruzada estratificada 5-fold",
-     "5 folds de 1,600 imágenes\npor corrida: 68% train · 12% val · 20% test"),
-    ("3. Configuración de 10 modelos base",
-     "CNN + Transformers · pesos preentrenados\nfine-tuning completo"),
-    ("4. Entrenamiento y selección de checkpoint",
-     "Máx. 30 epochs · early stopping = 7\ncriterio: mejor val_F1 macro por fold"),
-    ("5. Evaluación sobre test independiente",
-     "Mejor checkpoint → test del fold\nmatriz de confusión + probabilidades + métricas"),
-    ("6. Consolidación OOF / pooled",
-     "Concatenación de los 5 test\n8,000 predicciones out-of-fold, una por imagen"),
-    ("7. Comparación multicriterio",
-     "F1 macro · Accuracy · AUC · estabilidad\nparámetros/eficiencia · arquitectura"),
-    ("8. Selección de modelos de referencia",
-     "ViT-Base/16 + DenseNet-121\nsalida para las fases posteriores"),
+NOMBRES = {
+    "vit_base_patch16_224": "ViT-Base/16", "densenet121": "DenseNet-121",
+    "swin_base_patch4_window7_224": "Swin-Base", "vit_small_patch14_dinov2": "DINOv2-Small",
+    "efficientnet_b0": "EfficientNet-B0", "efficientnet_lite0": "EfficientNet-Lite0",
+    "mobilenetv3_small_100": "MobileNetV3-Small", "resnet50": "ResNet-50",
+    "mobilenetv2_100": "MobileNetV2", "mobilenetv1_100": "MobileNetV1",
+}
+ELEGIDOS = ("vit_base_patch16_224", "densenet121")
+
+# Cross-dataset, metodo congelado sin x2 (repo Generalizacion_ViT_DenseNet).
+# f1: F1 macro oficial (media de 5 folds); f1_pool/acc_pool/auc_pool: pooled de
+# la corrida de matrices de confusion/ROC; trd/gap/rbe: Indicadores_Robustez.
+CROSS_DATASET = {
+    ("vit_base_patch16_224", "Trucha"): dict(f1=86.11, f1_pool=86.18, acc_pool=86.87, auc_pool=0.9197,
+                                             trd=88.81, gap=0.1085, rbe=26.59),
+    ("vit_base_patch16_224", "Rohu"): dict(f1=88.17, f1_pool=87.67, acc_pool=89.45, auc_pool=0.9514,
+                                           trd=90.93, gap=0.0879, rbe=31.38),
+    ("densenet121", "Trucha"): dict(f1=80.88, f1_pool=80.80, acc_pool=82.00, auc_pool=0.8973,
+                                    trd=84.55, gap=0.1478, rbe=None),
+    ("densenet121", "Rohu"): dict(f1=82.85, f1_pool=83.01, acc_pool=85.57, auc_pool=0.9140,
+                                  trd=86.61, gap=0.1281, rbe=None),
+}
+PARAMS_M = {"vit_base_patch16_224": "85.8", "densenet121": "7.0"}
+
+
+def cargar_intra():
+    pooled = {r["model"]: r for r in csv.DictReader(open(CSV_POOLED))}
+    f1s = {}
+    for r in csv.DictReader(open(CSV_FOLDS)):
+        f1s.setdefault(r["model"], []).append(float(r["f1"]))
+    for m, r in pooled.items():
+        r["f1_media"] = statistics.mean(f1s[m])
+        r["f1_de"] = statistics.stdev(f1s[m])
+    return sorted(pooled.values(), key=lambda r: -float(r["f1"]))
+
+
+# --- Figura 3.1 ---------------------------------------------------------------
+
+ETAPAS = [
+    ("ETAPA 1", "Preparación", "#2E6DB4", "#EEF4FB", [
+        ("3.2", "Conjuntos de datos y preparación de datos",
+         "Preparar los tres repositorios con un procesamiento común (depuración, recorte de la región "
+         "ocular, homologación de las categorías de frescura y normalización). Mendeley (fuente) se "
+         "particiona y solo su conjunto de entrenamiento se aumenta; OneDrive y Kaggle (objetivo) se "
+         "reservan hasta la evaluación cross-dataset.",
+         "conjuntos de datos comparables entre dominios, sin entrenamiento previo."),
+        ("3.3", "Diseño experimental de los modelos candidatos",
+         "Definir los modelos candidatos a partir de la literatura, junto con la partición de los datos "
+         "(5 folds, semilla 42), los hiperparámetros, las métricas y los escenarios intra-dataset y "
+         "cross-dataset (Mendeley → OneDrive y Mendeley → Kaggle).",
+         "protocolo experimental común."),
+    ]),
+    ("ETAPA 2", "Implementación\ny evaluación\nintra-dataset", "#B87A22", "#FDF6EC", [
+        ("3.4", "Implementación de los modelos candidatos",
+         "Entrenar los modelos de Machine Learning y Deep Learning candidatos bajo condiciones homogéneas "
+         "en el dominio fuente (Mendeley).",
+         "modelos candidatos entrenados."),
+        ("3.5", "Evaluación intra-dataset de los modelos candidatos",
+         "Medir el desempeño de cada modelo en el dominio fuente mediante exactitud, precisión, "
+         "sensibilidad, F1-score y especificidad.",
+         "desempeño comparativo de los modelos candidatos."),
+    ]),
+    ("ETAPA 3", "Selección", "#2E8A5A", "#EDF6F0", [
+        ("3.6", "Selección de los modelos de referencia",
+         "Elegir, según el desempeño intra-dataset, los modelos que conformarán la línea base experimental.",
+         "modelos de referencia (línea base experimental)."),
+    ]),
+    ("ETAPA 4", "Evaluación\ncross-dataset\ny análisis", "#7E57D2", "#F4F0FB", [
+        ("3.7", "Evaluación cross-dataset de los modelos de referencia",
+         "Evaluar los modelos de referencia, entrenados con Mendeley, sobre los dominios objetivo OneDrive "
+         "y Kaggle mediante el método congelado (solo se reentrena la cabeza de clasificación), con 5 "
+         "folds y semilla 42.",
+         "desempeño frente a dominios no vistos durante el entrenamiento base."),
+        ("3.8", "Análisis del efecto de la variabilidad visual entre conjuntos de datos",
+         "Cuantificar, para cada modelo de referencia, la degradación y la tasa de retención del "
+         "desempeño (F1-Score Macro) entre el escenario intra-dataset y los cross-dataset, y comparar "
+         "los modelos según su robustez, considerando que el cambio de dominio incluye también "
+         "diferencias de especie.",
+         "magnitud del efecto del cambio de dominio y robustez comparada de los modelos."),
+    ]),
+    ("ETAPA 5", "Consolidación", "#2A7B7B", "#ECF5F5", [
+        ("3.9", "Consolidación de la línea base experimental",
+         "Reunir en una síntesis final los modelos de referencia con sus resultados intra-dataset, "
+         "cross-dataset y de retención, que servirán como punto de comparación para el modelo propuesto.",
+         "línea base experimental consolidada y diagnóstico del problema."),
+    ]),
 ]
+AZUL = "#1F3A5C"
+WRAP = 80          # caracteres por linea dentro de cada tarjeta
+LH = 0.30          # alto de linea de texto
 
 
 def figura_flujo() -> io.BytesIO:
-    n = len(ETAPAS_FIGURA)
-    box_h, gap, top = 1.0, 0.45, 1.0
-    total_h = top + n * box_h + (n - 1) * gap + 0.9
-    fig, ax = plt.subplots(figsize=(8.5, total_h * 0.95))
-    ax.set_xlim(0, 10)
-    ax.set_ylim(0, total_h)
+    def lineas(t):
+        return textwrap.wrap(t, WRAP)
+
+    def alto_tarjeta(s):
+        _, _, busca, res = s
+        return 0.95 + LH * (len(lineas(busca)) + 1 + len(lineas(res)))
+
+    gap_t, pad, flecha = 0.18, 0.18, 0.55
+    alto_etapas = [sum(alto_tarjeta(s) for s in e[4]) + gap_t * (len(e[4]) - 1) + 2 * pad for e in ETAPAS]
+    h_cab, h_pie = 1.7, 1.05
+    total = h_cab + sum(alto_etapas) + h_pie + flecha * (len(ETAPAS) + 1) + 0.2
+    W = 14.0
+    fig, ax = plt.subplots(figsize=(W * 0.72, total * 0.72))
+    ax.set_xlim(0, W)
+    ax.set_ylim(0, total)
     ax.axis("off")
-    ax.text(5, total_h - 0.4, "Flujo metodológico — Evaluación y selección de modelos base",
-            ha="center", va="center", fontsize=14, fontweight="bold")
-    for i, (titulo, detalle) in enumerate(ETAPAS_FIGURA):
-        y = total_h - top - i * (box_h + gap) - box_h
-        ax.add_patch(FancyBboxPatch((0.6, y), 8.8, box_h, boxstyle="round,pad=0.02,rounding_size=0.08",
-                                    linewidth=1.5, edgecolor="#1F4E79", facecolor="#EAF1F8"))
-        ax.text(0.9, y + box_h - 0.28, titulo, fontsize=11.5, fontweight="bold", va="center")
-        ax.text(0.9, y + 0.33, detalle, fontsize=9.5, va="center", linespacing=1.3)
-        if i < n - 1:
-            ax.annotate("", xy=(5, y - gap + 0.04), xytext=(5, y - 0.04),
-                        arrowprops=dict(arrowstyle="-|>", color="#444444", lw=1.5))
-    ax.text(5, 0.35, "Resultado del flujo: dos modelos de referencia seleccionados con evidencia "
-            "cuantitativa y trazable.", ha="center", va="center", fontsize=9.5)
+
+    def caja(x, y, w, h, fc, ec, lw=1.6, r=0.12):
+        ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle=f"round,pad=0,rounding_size={r}",
+                                    linewidth=lw, edgecolor=ec, facecolor=fc))
+
+    def baja(y):
+        ax.annotate("", xy=(W / 2, y - flecha + 0.02), xytext=(W / 2, y),
+                    arrowprops=dict(arrowstyle="-|>", color=AZUL, lw=2))
+        return y - flecha
+
+    y = total - 0.1
+    caja(0.2, y - h_cab, W - 0.4, h_cab, AZUL, AZUL)
+    ax.text(W / 2, y - 0.3, "CAPÍTULO III", ha="center", va="center", color="#DDE6F0", fontsize=9)
+    ax.text(W / 2, y - 0.68, "Evaluación de Modelos Base", ha="center", va="center", color="white",
+            fontsize=14, fontweight="bold")
+    ax.text(W / 2, y - 1.2, "Identificar los modelos de Machine Learning y Deep Learning con mejor desempeño y medir\n"
+            "cómo se ve afectado ese desempeño por la variabilidad visual entre conjuntos de datos.",
+            ha="center", va="center", color="white", fontsize=9, linespacing=1.4)
+    y = baja(y - h_cab)
+
+    x_izq, w_izq = 0.2, 2.5
+    x_der = x_izq + w_izq
+    for (etq, nombre, color, fondo, secciones), h in zip(ETAPAS, alto_etapas):
+        caja(x_izq, y - h, W - 0.4, h, fondo, color, lw=2)
+        ax.add_patch(plt.Rectangle((x_izq + 0.02, y - h + 0.02), w_izq, h - 0.04, color=color, lw=0))
+        ax.text(x_izq + w_izq / 2, y - h / 2 + 0.25 + 0.17 * nombre.count("\n"), etq, ha="center",
+                va="center", color="#E8EEF5", fontsize=9)
+        ax.text(x_izq + w_izq / 2, y - h / 2 - 0.1, nombre, ha="center", va="center", color="white",
+                fontsize=10, fontweight="bold", linespacing=1.25)
+        yt = y - pad
+        for s in secciones:
+            num, titulo, busca, res = s
+            ht = alto_tarjeta(s)
+            caja(x_der + 0.2, yt - ht, W - x_der - 0.6, ht, "white", color, lw=1.1, r=0.1)
+            caja(x_der + 0.4, yt - 0.55, 0.85, 0.4, color, color, lw=0, r=0.08)
+            ax.text(x_der + 0.825, yt - 0.35, num, ha="center", va="center", color="white", fontsize=10,
+                    fontweight="bold")
+            xt = x_der + 1.45
+            ax.text(xt, yt - 0.35, titulo, va="center", color=color, fontsize=9.8, fontweight="bold")
+            yl = yt - 0.8
+            ax.text(xt, yl, "¿Qué se busca?", va="center", color=color, fontsize=8.8, fontweight="bold")
+            for ln in lineas(busca):
+                yl -= LH
+                ax.text(xt, yl, ln, va="center", color="#222222", fontsize=8.8)
+            yl -= LH
+            ax.text(xt, yl, "Resultado:", va="center", color=color, fontsize=8.8, fontweight="bold")
+            for ln in lineas(res):
+                yl -= LH
+                ax.text(xt, yl, ln, va="center", color="#222222", fontsize=8.8)
+            yt -= ht + gap_t
+        y = baja(y - h)
+
+    caja(0.2, y - h_pie, W - 0.4, h_pie, "#EEF2F7", AZUL, lw=2)
+    ax.text(W / 2, y - 0.35, "Línea base experimental y diagnóstico del efecto de la variabilidad visual",
+            ha="center", va="center", color=AZUL, fontsize=10.5, fontweight="bold")
+    ax.text(W / 2, y - 0.72, "Insumo para el desarrollo del modelo propuesto (Capítulo IV) y para su "
+            "validación (Capítulo V)", ha="center", va="center", color="#222222", fontsize=9.5)
+
     buf = io.BytesIO()
     fig.savefig(buf, format="png", dpi=200, bbox_inches="tight")
     fig.savefig(FIG_OUT, dpi=200, bbox_inches="tight")  # misma figura, usada en Documentacion_Tecnica
@@ -91,13 +231,62 @@ def vinetas(doc, items):
         p.add_run(texto)
 
 
-def alineacion(doc, texto):
-    parrafo(doc, texto, bold_prefix="Alineación dentro del flujo. ")
+def resultado(doc, texto):
+    parrafo(doc, texto, bold_prefix="Resultado de la sección. ")
+
+
+def rotulo(doc, numero, titulo):
+    """Rotulo de tabla/figura en formato APA: numero en negrita y titulo en cursiva."""
+    doc.add_paragraph().add_run(numero).bold = True
+    doc.add_paragraph().add_run(titulo).italic = True
+
+
+def fuente(doc, texto="Fuente: Elaboración propia."):
+    doc.add_paragraph().add_run(texto).font.size = Pt(9)
+
+
+def _sombrear(celda, color):
+    shd = OxmlElement("w:shd")
+    shd.set(qn("w:val"), "clear")
+    shd.set(qn("w:color"), "auto")
+    shd.set(qn("w:fill"), color)
+    celda._tc.get_or_add_tcPr().append(shd)
+
+
+def tabla(doc, encabezado, filas, anchos_cm, resaltar=()):
+    t = doc.add_table(rows=1, cols=len(encabezado))
+    t.style = "Table Grid"
+    t.alignment = WD_TABLE_ALIGNMENT.CENTER
+    for i, h in enumerate(encabezado):
+        c = t.rows[0].cells[i]
+        r = c.paragraphs[0].add_run(h)
+        r.bold, r.font.size = True, Pt(9.5)
+        _sombrear(c, "D9E2F3")
+    for k, fila in enumerate(filas):
+        celdas = t.add_row().cells
+        for i, v in enumerate(fila):
+            r = celdas[i].paragraphs[0].add_run(str(v))
+            r.font.size = Pt(9.5)
+            if k in resaltar:
+                r.bold = True
+                _sombrear(celdas[i], "FFF2CC")
+    t.autofit = False
+    for i, w in enumerate(anchos_cm):  # LibreOffice/Word leen el ancho de tblGrid, no solo de cada celda
+        t.columns[i].width = Cm(w)
+        for c in t.columns[i].cells:
+            c.width = Cm(w)
+    return t
 
 
 # --- contenido ----------------------------------------------------------------
 
 def main():
+    intra = cargar_intra()
+    por_modelo = {r["model"]: r for r in intra}
+    vit, dn = por_modelo["vit_base_patch16_224"], por_modelo["densenet121"]
+    caidas = [float(por_modelo[m]["f1"]) - CROSS_DATASET[(m, d)]["f1"]
+              for m in ELEGIDOS for d in ("Trucha", "Rohu")]
+
     doc = Document()
     sec = doc.sections[0]
     sec.page_width, sec.page_height = Cm(21.0), Cm(29.7)  # A4
@@ -106,414 +295,358 @@ def main():
     doc.styles["Normal"].font.name = "Calibri"
     doc.styles["Normal"].font.size = Pt(11)
 
-    t = doc.add_paragraph()
-    t.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r = t.add_run("FLUJO METODOLÓGICO")
-    r.bold, r.font.size = True, Pt(16)
-    t = doc.add_paragraph()
-    t.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r = t.add_run("Capítulo III: Evaluación de Modelos Base")
-    r.bold, r.font.size = True, Pt(13)
+    doc.add_heading("Capítulo III: Evaluación de Modelos Base", level=1)
 
-    # 1. Proposito
-    doc.add_heading("1. Propósito del flujo metodológico", level=1)
+    # 3.1 ---------------------------------------------------------------------
+    doc.add_heading("3.1. Introducción", level=2)
     parrafo(doc,
-        "El flujo metodológico establece la secuencia de actividades para evaluar y comparar los diez "
-        "modelos base y seleccionar aquellos que serán utilizados como modelos de referencia en las "
-        "fases posteriores de la investigación. Para garantizar una comparación consistente, todos los "
-        "modelos son sometidos a un procedimiento común que comprende la preparación y partición de los "
-        "datos, el entrenamiento, la validación, la evaluación sobre datos de prueba y la consolidación "
-        "de los resultados.")
+        "El presente capítulo tiene como propósito identificar los modelos de Machine Learning con mejor "
+        "desempeño en la clasificación de la frescura del pescado a partir de imágenes oculares y "
+        "determinar en qué medida dicho desempeño se ve afectado por la variabilidad visual existente "
+        "entre distintos conjuntos de datos. De esta manera, el capítulo da respuesta al primer y segundo "
+        "objetivo específico de la investigación y establece la línea base experimental frente a la cual "
+        "se comparará el modelo propuesto.")
     parrafo(doc,
-        "La evaluación se realiza mediante validación cruzada estratificada de cinco folds, permitiendo "
-        "analizar el desempeño de cada arquitectura sobre diferentes particiones del conjunto de datos. "
-        "En cada fold, el entrenamiento se realiza de manera independiente, utilizando el conjunto de "
-        "validación para seleccionar el mejor checkpoint y reservando el conjunto de prueba "
-        "exclusivamente para la evaluación final del modelo correspondiente.")
+        "En relación con el método de investigación (sección 2.4.2), el capítulo desarrolla sus dos "
+        "primeras fases. La Fase 1 (línea base), asociada al Objetivo Específico 1, se ejecuta en las "
+        "secciones 3.2 a 3.6 y concluye con la selección de los modelos de referencia a partir de su "
+        "desempeño intra-dataset. La Fase 2 (diagnóstico), asociada al Objetivo Específico 2, se ejecuta "
+        "en las secciones 3.7 y 3.8 y trabaja únicamente con los modelos seleccionados. Finalmente, la "
+        "sección 3.9 consolida los productos de ambas fases. Cabe precisar que en las secciones 3.2 y 3.3 "
+        "se preparan también los conjuntos de datos de los dominios objetivo y se define el esquema "
+        "cross-dataset, insumos que se emplean posteriormente en la Fase 2.")
     parrafo(doc,
-        "Posteriormente, las predicciones obtenidas en los cinco conjuntos de prueba se integran como "
-        "predicciones out-of-fold (OOF), de modo que cada imagen dispone de una predicción generada por "
-        "un modelo que no la utilizó durante su entrenamiento. Sobre estas predicciones se calculan "
-        "métricas globales (pooled) como resumen complementario del desempeño. En paralelo, los "
-        "resultados obtenidos en cada fold permiten caracterizar la variabilidad y estabilidad del "
-        "modelo entre particiones.")
+        "El capítulo se organiza en cinco etapas secuenciales. En la primera etapa (preparación) se "
+        "describen los conjuntos de datos y su procesamiento común, que comprende la depuración, el "
+        "recorte de la región ocular, la homologación de las categorías de frescura entre dominios y la "
+        "normalización; en esta etapa no se entrena ningún modelo, y se diferencia el conjunto fuente, que "
+        "se particiona para el entrenamiento, de los conjuntos objetivo, que se reservan hasta la "
+        "evaluación cross-dataset. Asimismo, se define el diseño experimental común que se aplicará a "
+        "todos los modelos candidatos. En la segunda etapa (implementación y evaluación intra-dataset) se "
+        "entrenan los modelos candidatos en el dominio fuente y se compara su desempeño. En la tercera "
+        "etapa (selección) se eligen los modelos de referencia que conforman la línea base experimental. "
+        "En la cuarta etapa (evaluación cross-dataset y análisis) se evalúan los modelos de referencia "
+        "sobre los dominios objetivo y se cuantifica el efecto de la variabilidad visual sobre su "
+        "desempeño y su robustez. Finalmente, en la quinta etapa (consolidación) se sintetizan los "
+        "resultados en la línea base experimental, que constituye el insumo para el desarrollo del modelo "
+        "propuesto en el Capítulo IV y para su validación en el Capítulo V.")
     parrafo(doc,
-        "Finalmente, la evidencia obtenida permite seleccionar los modelos de referencia que continuarán "
-        "en las siguientes fases experimentales. De esta manera, el flujo asegura que la selección no "
-        "dependa de un único resultado o de una sola partición de los datos, sino de un proceso "
-        "sistemático, documentado y sustentado en criterios cuantitativos de evaluación.")
-
-    # 2. Figura
-    doc.add_heading("2. Flujo metodológico", level=1)
-    doc.add_picture(figura_flujo(), width=Cm(14.5))
+        "En la Figura 3.1 se presenta el flujo del capítulo, en el que se resume para cada sección qué se "
+        "busca y el resultado esperado.")
+    rotulo(doc, "Figura 3.1", "Flujo del Capítulo III: Evaluación de Modelos Base")
+    doc.add_picture(figura_flujo(), width=Cm(15.5))
     doc.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
-    cap = doc.add_paragraph()
-    cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    cap.add_run("Figura 1. ").bold = True
-    r = cap.add_run("Flujo metodológico para la evaluación y selección de los modelos base. "
-                    "Fuente: elaboración propia.")
-    r.italic = True
+    fuente(doc)
     parrafo(doc,
-        "La lectura del flujo es secuencial. Cada etapa recibe la salida de la etapa anterior y agrega "
-        "un control metodológico específico. Primero se fija el conjunto de datos; después se "
-        "construyen particiones comparables; luego se someten los diez modelos al mismo principio de "
-        "entrenamiento y selección del checkpoint; posteriormente se evalúan sobre datos de prueba "
-        "independientes y se consolidan los resultados de los cinco folds; finalmente, esos resultados "
-        "se comparan con varios criterios y se seleccionan los modelos de referencia.")
+        "En la Tabla 3.1 se muestra la correspondencia entre las secciones del capítulo y las fases y "
+        "actividades del método de investigación.")
+    rotulo(doc, "Tabla 3.1", "Correspondencia entre las secciones del Capítulo III y el método de investigación")
+    tabla(doc, ["Sección", "Fase del método", "Actividad del método de investigación que se desarrolla"], [
+        ("3.2", "Fase 1 y Fase 2", "Seleccionar y preparar el conjunto de datos base para el entrenamiento "
+         "de los modelos (Fase 1). Seleccionar los conjuntos de datos experimentales con diferencias "
+         "visuales representativas en iluminación, fondo y condiciones de adquisición (Fase 2)."),
+        ("3.3", "Fase 1 y Fase 2", "Identificar y seleccionar los algoritmos con mejor respaldo en la "
+         "literatura científica para su evaluación comparativa (Fase 1). Diseñar el esquema experimental "
+         "de transferencia entre conjuntos de datos (cross-dataset) (Fase 2)."),
+        ("3.4", "Fase 1", "Entrenar los modelos seleccionados bajo condiciones homogéneas de evaluación."),
+        ("3.5", "Fase 1", "Comparar el desempeño de los modelos entrenados mediante métricas de clasificación."),
+        ("3.6", "Fase 1", "Seleccionar los modelos con mejor desempeño para establecer la línea base "
+         "experimental de las fases posteriores."),
+        ("3.7", "Fase 2", "Ejecutar los modelos de referencia identificados bajo las dos configuraciones "
+         "cross-dataset resultantes."),
+        ("3.8", "Fase 2", "Medir la degradación del desempeño mediante métricas de clasificación y métricas "
+         "de robustez asociadas a la generalización. Analizar el impacto de la variabilidad visual sobre "
+         "el comportamiento de los modelos seleccionados."),
+        ("3.9", "Fase 1 y Fase 2", "No incorpora una actividad nueva: consolida los productos de ambas "
+         "fases, es decir, la línea base experimental (Fase 1) y el diagnóstico del efecto de la "
+         "variabilidad visual (Fase 2)."),
+    ], [1.6, 2.8, 11.6])
+    fuente(doc, "Nota. La actividad de revisión de la literatura científica de la Fase 1 se desarrolla en "
+                "el Capítulo II (Marco Referencial). Fuente: Elaboración propia.")
 
-    # 3. Explicacion detallada
-    doc.add_heading("3. Explicación detallada del flujo metodológico", level=1)
-
-    # Etapa 1
-    doc.add_heading("Etapa 1. Preparación y delimitación del conjunto de datos de evaluación", level=2)
+    # 3.2 ---------------------------------------------------------------------
+    doc.add_heading("3.2. Conjuntos de datos y preparación de datos", level=2)
     parrafo(doc,
-        "El punto de partida de la evaluación es el dataset DNC (DataSetNotClean), compuesto por 8,000 "
-        "imágenes. El conjunto está balanceado: 4,000 imágenes pertenecen a la clase «fresco» y 4,000 a "
-        "la clase «no_fresco». Este balance es relevante porque establece una base equivalente para "
-        "ambas clases y permite que la comparación de los modelos no quede dominada, en este "
-        "experimento, por una clase mayoritaria.")
-    parrafo(doc,
-        "En esta etapa todavía no se entrena ningún modelo. Su función es fijar el universo experimental "
-        "que será recorrido por la validación cruzada. Las 8,000 imágenes constituyen el conjunto sobre "
-        "el cual se generarán las particiones de entrenamiento, validación y prueba. Asimismo, se deja "
-        "establecido que las métricas finales se expresan en un problema binario y que las métricas por "
-        "clase se calculan tratando cada clase como positiva por turno; posteriormente se obtiene el "
-        "promedio macro.")
-    parrafo(doc,
-        "La métrica F1 se interpreta como F1 macro. Para cada clase, el F1 corresponde a la media "
-        "armónica entre Precisión y Recall; posteriormente, el F1 macro se obtiene como el promedio no "
-        "ponderado del F1 de «fresco» y del F1 de «no_fresco». De esta forma, ambas clases tienen el "
-        "mismo peso en el resultado. El F1 macro se utiliza durante la validación para seleccionar el "
-        "checkpoint y también como una de las métricas principales para comparar los modelos.")
+        "La investigación trabaja con tres repositorios de imágenes oculares de pescado. Mendeley Data "
+        "(DataSetNotClean, DNC) es el dominio fuente: con él se entrenan y comparan los modelos "
+        "candidatos. OneDrive (trucha, Perú) y Kaggle (rohu, India) son los dominios objetivo: provienen "
+        "de otras especies, cámaras e iluminación, y se reservan para medir la generalización de los "
+        "modelos de referencia.")
     vinetas(doc, [
-        ("Entrada", "8,000 imágenes del dataset DNC."),
-        ("Clases", "4,000 fresco y 4,000 no_fresco."),
-        ("Unidad que continúa al flujo", "Cada imagen individual con su etiqueta de clase."),
-        ("Métrica central", "F1 macro, complementada con Accuracy, Precisión, Recall, Especificidad y "
-         "AUC; adicionalmente, la variabilidad entre folds se caracteriza mediante la desviación "
-         "estándar del F1."),
+        ("Mendeley (fuente)", "8,000 imágenes balanceadas, 4,000 fresco y 4,000 no_fresco, de 8 especies, "
+         "ya recortadas al ojo (aprox. 300×300 a 440×440 px)."),
+        ("OneDrive – Trucha (objetivo 1)", "1,150 imágenes tras la depuración; fotos originales de cabeza "
+         "completa a resolución de cámara (aprox. 4160×3120 px)."),
+        ("Kaggle – Rohu (objetivo 2)", "1,261 imágenes tras la depuración; fotos originales de cabeza "
+         "completa (aprox. 4032×3024 px)."),
     ])
-    alineacion(doc,
-        "Esta etapa define exactamente qué datos entran al experimento y bajo qué formulación de "
-        "clasificación. Sin esta delimitación, las métricas de los modelos no serían directamente "
-        "comparables.")
-
-    # Etapa 2
-    doc.add_heading("Etapa 2. Construcción de la validación cruzada estratificada de cinco folds", level=2)
     parrafo(doc,
-        "Una vez definido el conjunto de 8,000 imágenes, se aplica StratifiedKFold con n_splits=5, "
-        "shuffle=True y random_state=42. La función de la estratificación es conservar la proporción de "
-        "las dos clases dentro de las particiones. Al utilizar cinco folds, el conjunto completo se "
-        "divide en cinco bloques de 20%, equivalentes a 1,600 imágenes por fold, sin solape entre esos "
-        "bloques.")
-    parrafo(doc,
-        "La partición se realizó a nivel de imagen individual, sin agrupar las imágenes derivadas de una "
-        "misma captura o ejemplar. En consecuencia, si el conjunto contiene varias imágenes de una misma "
-        "captura, estas pueden quedar distribuidas entre entrenamiento, validación y prueba, por lo que "
-        "no se descarta cierta correlación entre conjuntos que podría elevar las métricas de prueba. "
-        "Esta condición se reconoce como una limitación del estudio.")
-    parrafo(doc,
-        "El procedimiento se repite cinco veces. En cada corrida, uno de los cinco folds se reserva como "
-        "conjunto de prueba. Ese test representa el 20% de las 8,000 imágenes y permanece fuera del "
-        "entrenamiento y de la validación de esa corrida. Sobre el 80% restante se aplica una separación "
-        "adicional mediante train_test_split (test_size=0.15) con estratificación y la misma semilla. De "
-        "esta forma, la distribución efectiva es 68% para entrenamiento (5,440 imágenes), 12% para "
-        "validación (960) y 20% para prueba (1,600).")
-    parrafo(doc,
-        "La rotación es esencial para entender la metodología. En la primera corrida un fold actúa como "
-        "test; en las siguientes corridas esa función pasa a los demás folds. Por tanto, al terminar las "
-        "cinco corridas, cada imagen habrá formado parte del conjunto de prueba exactamente una vez. "
-        "Dentro de una misma corrida, los conjuntos de entrenamiento, validación y prueba mantienen "
-        "funciones diferenciadas y no se mezclan entre sí.")
-    parrafo(doc,
-        "El conjunto de entrenamiento sirve para actualizar los pesos del modelo. El conjunto de "
-        "validación no actualiza los pesos: se utiliza para observar el comportamiento del modelo "
-        "durante los epochs y decidir cuál checkpoint es el mejor. El conjunto de prueba queda reservado "
-        "hasta que termina el entrenamiento de ese fold y se utiliza solo para medir el desempeño del "
-        "checkpoint seleccionado.")
+        "Los tres repositorios reciben un procesamiento común de cuatro pasos, para que las diferencias "
+        "entre dominios se deban a las condiciones visuales y no al encuadre de las imágenes:")
     vinetas(doc, [
-        ("Train = 68%", "Se utiliza para aprender y actualizar los pesos."),
-        ("Validation = 12%", "Se utiliza para calcular val_F1 y seleccionar el mejor checkpoint."),
-        ("Test = 20%", "Permanece sin uso durante el ajuste y se emplea solo al final del fold."),
-        ("Número de rotaciones", "Cinco; cada fold ocupa una vez el papel de test."),
+        ("Depuración", "en OneDrive y Kaggle se conservan las detecciones del ojo con estado «ok» y las "
+         "rescatadas en revisión manual; en Kaggle se excluyen además los falsos positivos confirmados "
+         "(escama, aleta o imagen borrosa)."),
+        ("Recorte de la región ocular", "el ojo se detecta con Fast Radial Symmetry Transform y se recorta "
+         "un cuadrado centrado en él, con el mismo encuadre que Mendeley."),
+        ("Homologación de categorías", "todas las etiquetas se llevan a un problema binario: fresco "
+         "(Mendeley: «Highly Fresh» y «Fresh»; OneDrive: días 1 y 3; Kaggle: Fresh_Eyes) y no_fresco "
+         "(Mendeley: «Not Fresh»; OneDrive: días 5, 7 y 9; Kaggle: Nonfresh_Eyes)."),
+        ("Normalización", "brillo y contraste con CLAHE en los dominios objetivo, redimensionado a 330×330 "
+         "px y, al ingresar al modelo, normalización con la media y desviación de ImageNet."),
     ])
-    alineacion(doc,
-        "La salida de esta etapa no es una sola división train/test, sino cinco escenarios de evaluación "
-        "equivalentes. Esto permite observar tanto el desempeño global como la variabilidad del modelo "
-        "frente a diferentes particiones.")
+    parrafo(doc,
+        "En esta sección no se entrena ningún modelo. Mendeley se particiona para el entrenamiento "
+        "(sección 3.3) y solo su conjunto de entrenamiento recibe data augmentation. OneDrive y Kaggle no "
+        "intervienen en el entrenamiento ni en la selección de los modelos base: se reservan hasta la "
+        "evaluación cross-dataset (sección 3.7).")
+    resultado(doc, "conjuntos de datos comparables entre dominios, sin entrenamiento previo.")
 
-    # Etapa 3
-    doc.add_heading("Etapa 3. Configuración homogénea de los diez modelos candidatos", level=2)
+    # 3.3 ---------------------------------------------------------------------
+    doc.add_heading("3.3. Diseño experimental de los modelos candidatos", level=2)
     parrafo(doc,
-        "Con las particiones ya definidas, el flujo incorpora los diez modelos candidatos que serán "
-        "sometidos al mismo principio experimental. Los modelos evaluados son: ViT-Base/16, "
-        "DenseNet-121, Swin-Base, DINOv2-Small, EfficientNet-B0, EfficientNet-Lite0, MobileNetV3-Small, "
-        "ResNet-50, MobileNetV2 y MobileNetV1. El conjunto incluye arquitecturas Transformer y "
-        "arquitecturas convolucionales, lo que posteriormente permitirá realizar una selección que no "
-        "dependa de una sola familia.")
+        "A partir de la revisión de la literatura (Capítulo II) se seleccionan diez modelos candidatos que "
+        "cubren las dos familias de arquitecturas usadas en clasificación de imágenes: Transformer "
+        "(ViT-Base/16, Swin-Base y DINOv2-Small) y redes convolucionales, CNN (DenseNet-121, "
+        "EfficientNet-B0, EfficientNet-Lite0, MobileNetV3-Small, ResNet-50, MobileNetV2 y MobileNetV1). "
+        "Así, la selección posterior no depende de una sola familia.")
+    doc.add_heading("Partición de los datos", level=3)
     parrafo(doc,
-        "Todos los modelos parten de pesos preentrenados (ImageNet; en DINOv2-Small, pesos "
-        "auto-supervisados de DINOv2) y se someten a fine-tuning completo. Esto significa que el "
-        "entrenamiento no se limita a reemplazar y ajustar únicamente la capa de clasificación final; "
-        "los pesos de toda la arquitectura se actualizan durante el entrenamiento para adaptarse a la "
-        "tarea de clasificación de frescura. En los modelos Transformer, el backbone se actualiza con una "
-        "tasa de aprendizaje diez veces menor que la de la cabeza de clasificación.")
-    parrafo(doc,
-        "Se consideran además diferencias operativas asociadas a las familias arquitectónicas. Para las "
-        "CNN se utilizó un tamaño de imagen de 256×256 y batch size de 16, mientras que los modelos "
-        "Transformer (ViT-Base/16, Swin-Base y DINOv2-Small) utilizaron 224×224 y batch size de 8 "
-        "durante el entrenamiento. Estas diferencias forman parte de la configuración real de ejecución "
-        "y deben entenderse como parámetros operativos de las arquitecturas, no como cambios en el "
-        "criterio con el que se decide qué modelo es mejor.")
-    parrafo(doc,
-        "El resto de la configuración de entrenamiento es común a los diez modelos: optimizador AdamW "
-        "con tasa de aprendizaje de 1e-4 y weight decay de 0.05; tres epochs de calentamiento (warmup) "
-        "lineal seguidos de un scheduler coseno; función de pérdida Focal Loss (γ = 2) con label "
-        "smoothing de 0.1; y gradient clipping con norma máxima de 1.0. El data augmentation (recorte "
-        "aleatorio, volteos, variación de color, desenfoque, rotación de ±15° y borrado aleatorio) se "
-        "aplica solo al conjunto de entrenamiento; validación y prueba usan únicamente redimensionado y "
-        "normalización.")
-    parrafo(doc,
-        "La implementación se realizó con Python y PyTorch/torchvision para entrenamiento y "
-        "transformaciones; timm como repositorio de arquitecturas; scikit-learn para StratifiedKFold, "
-        "train_test_split, matrices de confusión, ROC y AUC; pandas/numpy para tratamiento de "
-        "resultados; y matplotlib para las visualizaciones. El entorno de ejecución fue una MacBook con "
-        "chip Apple M2 y aceleración mediante Metal Performance Shaders (MPS). Las semillas se fijaron "
-        "en 42; no obstante, algunas operaciones en MPS no son deterministas, por lo que un "
-        "reentrenamiento puede producir diferencias del orden de décimas en las métricas.")
+        "Las 8,000 imágenes de Mendeley se dividen con StratifiedKFold (n_splits=5, shuffle=True, "
+        "random_state=42) en cinco bloques de 1,600 imágenes. En cada una de las cinco corridas, un bloque "
+        "se reserva como prueba (20%) y del 80% restante se separa un 15% para validación con "
+        "train_test_split estratificado y la misma semilla. La distribución efectiva es 68% entrenamiento "
+        "(5,440 imágenes), 12% validación (960) y 20% prueba (1,600). Al terminar las cinco corridas, cada "
+        "imagen fue prueba exactamente una vez.")
     vinetas(doc, [
-        ("Modelos basados en arquitecturas Transformer", "ViT-Base/16, Swin-Base y DINOv2-Small."),
-        ("CNN evaluadas", "DenseNet-121, EfficientNet-B0, EfficientNet-Lite0, MobileNetV3-Small, "
-         "ResNet-50, MobileNetV2 y MobileNetV1."),
-        ("Inicialización", "Pesos preentrenados."),
-        ("Ajuste", "Fine-tuning completo."),
-        ("Entrenamiento", "AdamW (lr 1e-4, weight decay 0.05), warmup + coseno, Focal Loss (γ = 2) con "
-         "label smoothing 0.1."),
+        ("Entrenamiento (68%)", "actualiza los pesos del modelo."),
+        ("Validación (12%)", "calcula val_F1 en cada epoch y elige el mejor checkpoint; no actualiza pesos."),
+        ("Prueba (20%)", "solo mide el checkpoint ya elegido; nunca se usa para tomar decisiones."),
     ])
-    alineacion(doc,
-        "Esta etapa asegura que la comparación posterior tenga diversidad arquitectónica. El flujo no "
-        "parte de un modelo previamente elegido: primero genera evidencia para diez candidatos y recién "
-        "después aplica criterios de selección.")
+    parrafo(doc,
+        "Limitación: la partición se hace a nivel de imagen individual, sin agrupar imágenes de una misma "
+        "captura o ejemplar. Si el conjunto contiene varias imágenes de una misma captura, pueden quedar en "
+        "conjuntos distintos y elevar las métricas de prueba.")
+    doc.add_heading("Hiperparámetros", level=3)
+    vinetas(doc, [
+        ("Inicialización", "pesos preentrenados (ImageNet; en DINOv2-Small, pesos auto-supervisados de "
+         "DINOv2) y fine-tuning completo de toda la arquitectura."),
+        ("Optimización", "AdamW (learning rate 1e-4, weight decay 0.05); 3 epochs de warmup lineal y luego "
+         "scheduler coseno; en los Transformer, el backbone usa un learning rate 10 veces menor que la cabeza."),
+        ("Pérdida", "Focal Loss (γ = 2) con label smoothing 0.1; gradient clipping con norma máxima 1.0."),
+        ("Entrada", "CNN: 256×256 px, batch size 16. Transformer: 224×224 px, batch size 8."),
+        ("Duración", "máximo 30 epochs con early stopping de paciencia 7."),
+        ("Data augmentation (solo entrenamiento)", "recorte aleatorio, volteos, variación de color, escala "
+         "de grises, desenfoque, rotación de ±15° y borrado aleatorio."),
+        ("Semilla", "42 en todas las particiones y entrenamientos. Algunas operaciones en MPS (Apple M2) no "
+         "son deterministas, por lo que un reentrenamiento puede variar en décimas."),
+    ])
+    doc.add_heading("Métricas", level=3)
+    parrafo(doc,
+        "A partir de la matriz de confusión se calculan exactitud (Accuracy), precisión, sensibilidad "
+        "(Recall), especificidad y F1-score. Las métricas por clase se calculan tomando cada clase como "
+        "positiva por turno y se promedian (macro), de modo que fresco y no_fresco pesan igual. La métrica "
+        "central es el F1 macro. Con las probabilidades de salida se construye la curva ROC y se calcula "
+        "el AUC. La estabilidad entre particiones se mide con la desviación estándar del F1 de los cinco "
+        "folds.")
+    doc.add_heading("Escenarios", level=3)
+    vinetas(doc, [
+        ("Intra-dataset", "entrenamiento y prueba en Mendeley (secciones 3.4 a 3.6), con los diez candidatos."),
+        ("Cross-dataset", "Mendeley → OneDrive (Trucha) y Mendeley → Kaggle (Rohu), solo con los modelos de "
+         "referencia (secciones 3.7 y 3.8)."),
+    ])
+    resultado(doc, "protocolo experimental común para los diez candidatos.")
 
-    # Etapa 4
-    doc.add_heading("Etapa 4. Entrenamiento por fold y selección del mejor checkpoint", level=2)
+    # 3.4 ---------------------------------------------------------------------
+    doc.add_heading("3.4. Implementación de los modelos candidatos", level=2)
     parrafo(doc,
-        "Esta es la etapa central de generación de modelos entrenados. Cada uno de los diez modelos se "
-        "entrena en cada uno de los cinco folds, lo que produce 50 combinaciones modelo–fold. Para cada "
-        "combinación se permite un máximo de 30 epochs. Sin embargo, el objetivo no es obligar a que "
-        "todos los entrenamientos lleguen al epoch 30, sino conservar el estado del modelo que muestre "
-        "el mejor comportamiento sobre el conjunto de validación.")
+        "Cada uno de los diez modelos se entrena en cada uno de los cinco folds: 50 entrenamientos "
+        "modelo–fold, todos bajo el protocolo de la sección 3.3. La implementación usa Python con PyTorch y "
+        "torchvision, timm como repositorio de arquitecturas, scikit-learn para la partición y las "
+        "métricas, y pandas, numpy y matplotlib para el tratamiento de resultados. El entorno de ejecución "
+        "es una MacBook con chip Apple M2 y aceleración Metal Performance Shaders (MPS).")
     parrafo(doc,
-        "Durante cada epoch se calcula val_F1. Cuando el valor obtenido supera el mejor val_F1 observado "
-        "previamente dentro de ese mismo fold, el checkpoint se sobrescribe y pasa a ser el nuevo «mejor "
-        "modelo» de esa corrida. Si en los epochs siguientes el desempeño empeora, esos pesos no "
-        "sustituyen al checkpoint guardado. Por ello, el modelo que finalmente se evalúa no es "
-        "necesariamente el correspondiente al último epoch ejecutado.")
+        "En cada epoch se calcula val_F1. Si supera el mejor valor registrado en ese fold, el checkpoint se "
+        "guarda como el nuevo mejor modelo. Si se acumulan siete epochs sin mejora, el entrenamiento se "
+        "detiene antes de los 30 epochs (early stopping). Al terminar, se recarga el mejor checkpoint, que "
+        "no es necesariamente el del último epoch.")
     parrafo(doc,
-        "Se incorpora early stopping con una paciencia de siete epochs sin mejora. Operativamente, esto "
-        "significa que si el entrenamiento acumula siete epochs sin superar el mejor val_F1 registrado, "
-        "se detiene antes de alcanzar los 30 epochs. Si aparece una nueva mejora, el contador de "
-        "paciencia vuelve a iniciar. Este mecanismo reduce entrenamiento innecesario y, sobre todo, "
-        "mantiene la selección del modelo ligada al desempeño de validación.")
-    parrafo(doc,
-        "Es importante distinguir tres conceptos. Los pesos se aprenden con train; el checkpoint se "
-        "selecciona con validation; y el desempeño final se mide con test. La separación de estas "
-        "funciones evita utilizar el test para tomar decisiones durante el entrenamiento. Una vez "
-        "finalizada la corrida, se recarga expresamente el mejor checkpoint almacenado.")
+        "Los pesos se aprenden con entrenamiento, el checkpoint se elige con validación y el desempeño se "
+        "mide con prueba. Esta separación evita usar la prueba para tomar decisiones durante el "
+        "entrenamiento.")
     vinetas(doc, [
-        ("Cantidad máxima de entrenamientos", "10 modelos × 5 folds = 50 combinaciones modelo–fold."),
-        ("Máximo de epochs", "30 por combinación."),
-        ("Early stopping", "Paciencia de 7 epochs sin mejora."),
-        ("Criterio para guardar checkpoint", "Mejor val_F1 macro observado en el fold."),
-        ("Modelo que pasa a test", "El mejor checkpoint, no necesariamente el último epoch."),
+        ("Entrenamientos", "10 modelos × 5 folds = 50."),
+        ("Checkpoint que pasa a prueba", "el de mejor val_F1 macro del fold."),
+        ("Detalle por modelo", "curvas de val_F1 por epoch y resultados por fold en "
+         "Documentacion_Tecnica_10_Modelos.docx, sección 3.4."),
     ])
-    alineacion(doc,
-        "La salida de esta etapa son cinco checkpoints seleccionados por modelo, uno por cada fold. "
-        "Estos checkpoints son los únicos que pasan a la evaluación independiente de la etapa siguiente.")
+    resultado(doc, "50 checkpoints entrenados, cinco por modelo candidato.")
 
-    # Etapa 5
-    doc.add_heading("Etapa 5. Evaluación del mejor checkpoint sobre el test independiente de cada fold",
-                    level=2)
+    # 3.5 ---------------------------------------------------------------------
+    doc.add_heading("3.5. Evaluación intra-dataset de los modelos candidatos", level=2)
     parrafo(doc,
-        "Al concluir el entrenamiento de un fold se recarga el checkpoint que obtuvo el mejor val_F1. "
-        "Recién en ese momento se utiliza el 20% de test correspondiente a la corrida. Ese conjunto de "
-        "prueba no se utiliza ni para actualizar los pesos ni para seleccionar el checkpoint. Las "
-        "métricas reportadas se obtuvieron recargando esos mismos checkpoints y repitiendo únicamente la "
-        "inferencia sobre el mismo test, sin reentrenar ni tomar decisiones con él.")
+        "Cada checkpoint se evalúa una sola vez sobre la prueba de su fold. Como los cinco conjuntos de "
+        "prueba son disjuntos y cubren las 8,000 imágenes, sus predicciones se concatenan en 8,000 "
+        "predicciones out-of-fold (OOF): cada imagen se predice con un modelo que no la vio en el "
+        "entrenamiento. Sobre ellas se recalculan las métricas globales (pooled); la matriz de confusión "
+        "pooled es la suma de las cinco matrices de prueba. Además, se reporta el F1 de los cinco folds "
+        "como media ± desviación estándar.")
+    rotulo(doc, "Tabla 3.2", "Desempeño intra-dataset de los diez modelos candidatos en Mendeley (pooled, "
+                             "8,000 predicciones OOF)")
+    filas, resaltar = [], []
+    for k, r in enumerate(intra):
+        if r["model"] in ELEGIDOS:
+            resaltar.append(k)
+        filas.append((NOMBRES[r["model"]], *(f'{float(r[c]):.2f}' for c in
+                                             ("accuracy", "precision", "recall", "f1", "specificity")),
+                      f'{float(r["auc"]):.4f}', f'{r["f1_media"]:.2f} ± {r["f1_de"]:.2f}'))
+    tabla(doc, ["Modelo", "Exactitud (%)", "Precisión (%)", "Sensibilidad (%)", "F1 macro (%)",
+                "Especificidad (%)", "AUC", "F1 por fold (%)"], filas,
+          [3.3, 1.7, 1.7, 2.0, 1.6, 2.1, 1.5, 2.1], resaltar=resaltar)
+    fuente(doc, "Nota. Ordenado por F1 macro. Resaltados los modelos seleccionados en la sección 3.6. "
+                f"Fuente: {CSV_POOLED} y {CSV_FOLDS}.")
     parrafo(doc,
-        "Para cada fold se generan predicciones de clase y probabilidades. A partir de las predicciones "
-        "se construye la matriz de confusión y se identifican verdaderos positivos, falsos positivos, "
-        "falsos negativos y verdaderos negativos. Sobre estos valores se calculan Accuracy, Precisión, "
-        "Recall, F1 y Especificidad. Las probabilidades de salida (probabilidad softmax de la clase "
-        "«no_fresco») se utilizan adicionalmente para construir la curva ROC y calcular el AUC.")
-    parrafo(doc,
-        "Las métricas por clase se interpretan mediante un esquema one-vs-rest: primero se considera "
-        "«fresco» como clase positiva y después «no_fresco». Las métricas macro promedian ambas clases, "
-        "de modo que las dos tienen el mismo peso en el resultado reportado. El AUC agrega otra "
-        "dimensión: mientras Accuracy o F1 reflejan el comportamiento bajo la decisión de clasificación "
-        "aplicada, el AUC evalúa la capacidad de discriminación a través de distintos umbrales.")
-    parrafo(doc,
-        "Al repetirse este procedimiento en los cinco folds, cada modelo obtiene cinco evaluaciones "
-        "sobre conjuntos de prueba disjuntos. Estas evaluaciones permiten observar dos aspectos "
-        "distintos: el desempeño alcanzado por el modelo y la variabilidad de dicho desempeño cuando "
-        "cambia la partición de los datos.")
-    vinetas(doc, [
-        ("Productos por fold", "Predicciones, matriz de confusión, métricas y curva ROC."),
-        ("Uso del test", "Solo para medir el checkpoint ya seleccionado; nunca para tomar decisiones."),
-        ("Finalidad", "Obtener evidencia independiente de desempeño para cada fold."),
-    ])
-    alineacion(doc,
-        "Esta etapa convierte los checkpoints seleccionados en resultados de prueba por fold. Estos "
-        "resultados permiten analizar el desempeño y su variabilidad entre particiones y, "
-        "adicionalmente, construir una evaluación global mediante la consolidación de las predicciones "
-        "out-of-fold.")
+        f"ViT-Base/16 obtiene el mayor F1 macro ({vit['f1']}%) y DenseNet-121 el segundo ({dn['f1']}%), "
+        f"con el mayor AUC de los diez ({float(dn['auc']):.4f}). Los cuatro mejores modelos quedan entre "
+        "95.4% y 97.0% de F1; los seis restantes, entre 89.0% y 94.3%. Como el conjunto está balanceado, "
+        "exactitud, sensibilidad y especificidad coinciden prácticamente con el F1.")
+    resultado(doc, "desempeño comparativo de los diez modelos candidatos. Comparación completa en "
+                   "Documentacion_Tecnica_10_Modelos.docx, sección 3.5; matrices de confusión, curvas ROC y "
+                   "cálculos por fold de cada modelo en su sección 3.4.")
 
-    # Etapa 6
-    doc.add_heading("Etapa 6. Consolidación de predicciones out-of-fold (OOF) y métricas globales pooled",
-                    level=2)
+    # 3.6 ---------------------------------------------------------------------
+    doc.add_heading("3.6. Selección de los modelos de referencia", level=2)
     parrafo(doc,
-        "Después de evaluar los cinco checkpoints de un modelo, las predicciones obtenidas en los cinco "
-        "conjuntos de test se concatenan. Debido a que los folds de prueba son disjuntos y, en conjunto, "
-        "cubren las 8,000 imágenes, se obtienen 8,000 predicciones out-of-fold (OOF): cada imagen "
-        "aparece exactamente una vez como observación de prueba y su predicción procede de un modelo "
-        "entrenado sin utilizar esa imagen.")
-    parrafo(doc,
-        "A partir de las predicciones OOF concatenadas se calculan métricas globales (pooled). Estas "
-        "métricas constituyen un resumen complementario del comportamiento del modelo sobre el conjunto "
-        "completo de predicciones fuera de muestra. No deben interpretarse como el promedio de las "
-        "métricas de los cinco folds: métricas no lineales como F1 y AUC se recalculan directamente "
-        "sobre las predicciones o puntuaciones concatenadas y, por tanto, pueden diferir del promedio "
-        "aritmético de sus valores por fold. En el caso de la matriz de confusión, la matriz pooled "
-        "equivale a la suma celda a celda de las cinco matrices de confusión.")
-    parrafo(doc,
-        "Sobre las predicciones OOF se calculan las métricas globales conservando los valores obtenidos "
-        "experimentalmente. Para ViT-Base/16, el resultado pooled es F1 macro de 96.96%, Accuracy de "
-        "96.96% y AUC de 0.9900. Para DenseNet-121, el resultado pooled es F1 macro de 95.66%, Accuracy "
-        "de 95.66% y AUC de 0.9906. Estos valores proporcionan una visión global complementaria del "
-        "desempeño de cada arquitectura.")
-    parrafo(doc,
-        "Paralelamente, se conserva el F1 obtenido en cada uno de los cinco folds y se calcula su "
-        "desviación estándar muestral. Esta información caracteriza la estabilidad del modelo frente a "
-        "cambios en la partición. Por ello, la interpretación combina dos perspectivas: las métricas "
-        "globales OOF/pooled resumen el comportamiento agregado de las predicciones fuera de muestra, "
-        "mientras que la variabilidad entre folds informa sobre la consistencia del desempeño. La "
-        "evaluación por folds se resume mediante el F1 macro medio de las cinco particiones acompañado "
-        "de su desviación estándar (media ± DE), mientras que el F1 OOF/pooled se mantiene como una "
-        "medida global complementaria calculada sobre las 8,000 predicciones fuera de muestra.")
+        "La selección no depende de una sola métrica, sino de cinco criterios complementarios:")
     vinetas(doc, [
-        ("Resultado OOF/pooled", "Métricas recalculadas sobre las 8,000 predicciones out-of-fold "
-         "concatenadas."),
-        ("Matriz de confusión pooled", "Suma de las cinco matrices de confusión de test."),
-        ("Información por fold", "F1 de cada partición, resumido como media ± desviación estándar."),
+        ("Desempeño", f"F1 macro pooled: ViT-Base/16 es primero ({vit['f1']}%) y DenseNet-121 segundo "
+         f"({dn['f1']}%); Swin-Base ({por_modelo['swin_base_patch4_window7_224']['f1']}%) y DINOv2-Small "
+         f"({por_modelo['vit_small_patch14_dinov2']['f1']}%) quedan después."),
+        ("Discriminación", f"DenseNet-121 tiene el mayor AUC de los diez ({float(dn['auc']):.4f}) y "
+         f"ViT-Base/16 el segundo ({float(vit['auc']):.4f})."),
+        ("Estabilidad", f"desviación estándar del F1 entre folds: ViT-Base/16 {vit['f1_de']:.2f}, la más "
+         f"baja entre los modelos de alto desempeño; DenseNet-121 {dn['f1_de']:.2f}."),
+        ("Eficiencia", f"DenseNet-121 (~{PARAMS_M['densenet121']}M parámetros) logra más del 98% del F1 de "
+         f"ViT-Base/16 (~{PARAMS_M['vit_base_patch16_224']}M) con alrededor del 8% de sus parámetros."),
+        ("Diversidad arquitectónica", "se busca un representante Transformer y uno CNN. Swin-Base tiene un "
+         "F1 cercano a DenseNet-121, pero es Transformer como ViT-Base/16 y no aporta la comparación ViT "
+         "frente a CNN."),
     ])
-    alineacion(doc,
-        "Esta etapa genera dos niveles de evidencia complementarios: resultados por fold para analizar "
-        "la variabilidad del desempeño y resultados OOF/pooled para resumir globalmente las predicciones "
-        "fuera de muestra. Ambos niveles, junto con la complejidad del modelo, alimentan la comparación "
-        "multicriterio.")
+    parrafo(doc,
+        "Con estos criterios se seleccionan ViT-Base/16 (Transformer) y DenseNet-121 (CNN) como modelos de "
+        "referencia. Ninguno de los dos es el modelo propuesto de la tesis: ambos forman la línea base "
+        "experimental frente a la cual se comparará el modelo propuesto.")
+    resultado(doc, "modelos de referencia ViT-Base/16 y DenseNet-121 (línea base experimental). Sustento "
+                   "detallado en Sustento_Seleccion_Modelos.docx (sección 3.6).")
 
-    # Etapa 7
-    doc.add_heading("Etapa 7. Comparación multicriterio de los diez modelos", level=2)
+    # 3.7 ---------------------------------------------------------------------
+    doc.add_heading("3.7. Evaluación cross-dataset de los modelos de referencia", level=2)
     parrafo(doc,
-        "Con los resultados consolidados, el flujo deja de ser puramente operativo y entra en la fase de "
-        "decisión. La selección de los modelos no se realiza mediante una única métrica, sino mediante "
-        "cinco criterios complementarios: desempeño, discriminación, estabilidad, eficiencia y "
-        "diversidad arquitectónica.")
-    parrafo(doc,
-        "El primer criterio es el desempeño predictivo. Se considera el F1 macro obtenido sobre las "
-        "predicciones OOF/pooled, complementado por el comportamiento observado entre los cinco folds. "
-        "Bajo el resultado pooled, ViT-Base/16 ocupa el primer lugar con 96.96% y DenseNet-121 el "
-        "segundo con 95.66%. Swin-Base obtiene 95.56% y DINOv2-Small 95.44%.")
-    parrafo(doc,
-        "El segundo criterio es la capacidad discriminativa medida mediante AUC. DenseNet-121 obtiene el "
-        "mayor AUC pooled de los diez modelos, con 0.9906, y ViT-Base/16 ocupa el segundo lugar con "
-        "0.9900. El AUC se calcula a partir de las probabilidades de salida, no de las etiquetas de "
-        "clase predichas, y resume la capacidad de discriminación a través de distintos umbrales. Al "
-        "tratarse de un AUC calculado sobre predicciones OOF procedentes de cinco modelos entrenados en "
-        "folds diferentes, se interpreta como una medida global complementaria al análisis por fold.")
-    parrafo(doc,
-        "El tercer criterio es la estabilidad entre folds. Se utiliza la desviación estándar del F1 de "
-        "las cinco evaluaciones. ViT-Base/16 presenta una desviación estándar de 0.28, lo que evidencia "
-        "una alta estabilidad entre los candidatos de mayor desempeño. DenseNet-121 registra 0.79; "
-        "aunque no es la desviación más baja de todo el conjunto, mantiene un nivel de desempeño alto y "
-        "una estabilidad comparable con otros modelos líderes.")
-    parrafo(doc,
-        "El cuarto criterio es la eficiencia, observada mediante la relación entre desempeño y número de "
-        "parámetros. ViT-Base/16 tiene aproximadamente 85.8 millones de parámetros. DenseNet-121 alcanza "
-        "un F1 macro de 95.66% con aproximadamente 7.0 millones. DenseNet-121 obtiene más del 98% del "
-        "desempeño de ViT-Base/16 utilizando alrededor del 8% de sus parámetros. Por eso DenseNet no se "
-        "selecciona simplemente por ser «más pequeño», sino porque combina tamaño reducido con "
-        "desempeño y AUC muy altos.")
-    parrafo(doc,
-        "El quinto criterio es la diversidad arquitectónica. La selección busca conservar un "
-        "representante Transformer y un representante CNN. Esto evita que las siguientes fases se apoyen "
-        "en dos modelos muy parecidos desde el punto de vista de paradigma. Así, aunque Swin-Base tiene "
-        "un F1 muy cercano a DenseNet-121, pertenece a la misma gran familia Transformer que ViT-Base/16 "
-        "y no añade la comparación ViT frente a CNN que sí aporta DenseNet-121.")
-    parrafo(doc,
-        "La comparación de los otros modelos se interpreta con la misma lógica. EfficientNet-B0 presenta "
-        "buen AUC y eficiencia, pero su F1 es inferior a DenseNet-121. MobileNetV3-Small es muy liviano, "
-        "pero pierde desempeño. ResNet-50 posee más parámetros que DenseNet-121 y obtiene un F1 "
-        "claramente menor. MobileNetV2 presenta una desviación estándar muy baja, pero su F1 de 89.01% "
-        "no compensa la pérdida de desempeño. Por tanto, ningún criterio aislado determina la selección.")
+        "Los dos modelos de referencia, entrenados con Mendeley, se llevan a los dominios objetivo con el "
+        "método congelado (linear probe). El backbone conserva los pesos aprendidos en Mendeley y no se "
+        "actualiza: sus parámetros no reciben gradiente y permanece en modo de evaluación, de modo que "
+        "BatchNorm no cambia sus estadísticas. Solo se reentrena la cabeza de clasificación con imágenes "
+        "del dominio objetivo. Así, el resultado mide cuán transferibles son las características "
+        "aprendidas en Mendeley.")
     vinetas(doc, [
-        ("Desempeño", "F1 macro OOF/pooled y Accuracy, complementados con el comportamiento del F1 entre "
-         "folds."),
-        ("Discriminación", "AUC OOF/pooled calculado a partir de las probabilidades de salida."),
-        ("Estabilidad", "Desviación estándar del F1 entre los cinco folds."),
-        ("Eficiencia", "Relación entre desempeño y cantidad de parámetros."),
-        ("Diversidad", "Representación de las familias Transformer y CNN."),
+        ("Escenarios", "Mendeley → OneDrive (Trucha, 1,150 imágenes) y Mendeley → Kaggle (Rohu, 1,261 "
+         "imágenes)."),
+        ("Partición", "5 folds con semilla 42: StratifiedKFold en Trucha y StratifiedGroupKFold en Rohu, "
+         "agrupando fotos casi idénticas para que no queden a la vez en entrenamiento y validación."),
+        ("Punto de partida", "en el fold k se carga el checkpoint de Mendeley del mismo fold k."),
+        ("Entrenamiento de la cabeza", "AdamW (learning rate 1e-4, weight decay 1e-4), scheduler coseno, "
+         "entropía cruzada, máximo 30 epochs con early stopping de paciencia 8; data augmentation sin "
+         "duplicar el conjunto de entrenamiento (sin x2)."),
+        ("Evaluación", "sobre la validación del fold; el F1 oficial es la media de los cinco folds."),
     ])
-    alineacion(doc,
-        "Esta etapa transforma resultados experimentales en criterios explícitos de decisión. La "
-        "selección final puede defenderse porque cada modelo elegido cumple un papel diferente y "
-        "sustentado.")
+    rotulo(doc, "Tabla 3.3", "Desempeño cross-dataset de los modelos de referencia (método congelado)")
+    filas = []
+    for m in ELEGIDOS:
+        for dom in ("Trucha", "Rohu"):
+            c = CROSS_DATASET[(m, dom)]
+            filas.append((NOMBRES[m], f"Mendeley → {dom}", f"{c['f1']:.2f}", f"{c['f1_pool']:.2f}",
+                          f"{c['acc_pool']:.2f}", f"{c['auc_pool']:.4f}"))
+    tabla(doc, ["Modelo", "Escenario", "F1 macro (%, media 5 folds)", "F1 pooled (%)", "Exactitud pooled (%)",
+                "AUC pooled"], filas, [3.0, 3.2, 2.8, 2.2, 2.6, 2.0])
+    fuente(doc, "Nota. Los valores pooled provienen de una corrida aparte con la misma configuración, por eso "
+                "difieren levemente del F1 oficial. Fuente: repositorio Generalizacion_ViT_DenseNet "
+                "(3_resultados/ y Documentacion_Tecnica_ViT_DenseNet.docx).")
+    resultado(doc, "desempeño de los modelos de referencia frente a dominios no vistos durante el "
+                   "entrenamiento base.")
 
-    # Etapa 8
-    doc.add_heading("Etapa 8. Selección de ViT-Base/16 y DenseNet-121 como modelos de referencia", level=2)
+    # 3.8 ---------------------------------------------------------------------
+    doc.add_heading("3.8. Análisis del efecto de la variabilidad visual entre conjuntos de datos", level=2)
     parrafo(doc,
-        "La última etapa formaliza la decisión producida por todo el flujo. Se seleccionan dos de los "
-        "diez modelos: ViT-Base/16 como representante de las arquitecturas Transformer y DenseNet-121 "
-        "como representante de las arquitecturas convolucionales. La elección no se realiza antes del "
-        "experimento; es el resultado de la evidencia acumulada en las etapas anteriores.")
-    parrafo(doc,
-        "ViT-Base/16 queda seleccionado porque obtiene el mayor F1 macro OOF/pooled de los diez modelos, "
-        "96.96%, con Accuracy de 96.96% y AUC pooled de 0.9900. Además, presenta una desviación estándar "
-        "del F1 de 0.28 entre folds, lo que evidencia baja variabilidad entre particiones dentro del "
-        "grupo de modelos de alto desempeño. Su matriz de confusión pooled produce F1 de 96.95% para "
-        "fresco y 96.98% para no_fresco, cuyo promedio corresponde, salvo efectos de redondeo, al F1 "
-        "macro reportado.")
-    parrafo(doc,
-        "DenseNet-121 queda seleccionado porque obtiene el segundo mayor F1 macro OOF/pooled, 95.66%, "
-        "Accuracy de 95.66% y el mayor AUC pooled de todo el grupo, 0.9906. Su matriz de confusión "
-        "pooled produce F1 de 95.62% para fresco y 95.70% para no_fresco, cuyo promedio es 95.66%. A "
-        "esto se suma su menor número de parámetros, aproximadamente 7.0 millones, frente a 85.8 "
-        "millones de ViT-Base/16.")
-    parrafo(doc,
-        "La combinación final tiene, por tanto, una lógica complementaria. ViT-Base/16 representa el "
-        "mayor desempeño y una baja variabilidad entre particiones dentro del grupo de modelos de alto "
-        "desempeño; DenseNet-121 representa una CNN con desempeño muy cercano, el mayor AUC OOF/pooled "
-        "entre los modelos evaluados y una relación desempeño–parámetros favorable. Incorporar un segundo "
-        "modelo basado en arquitectura Transformer, como Swin-Base, no aportaría la misma diversidad de "
-        "paradigma que la combinación ViT-CNN.")
-    parrafo(doc,
-        "La salida metodológica del flujo no debe interpretarse como que uno de los dos modelos es el "
-        "«modelo propuesto» de la tesis. Ambos constituyen modelos de referencia seleccionados a partir "
-        "de la evaluación base. Su función es proporcionar una línea experimental sustentada para las "
-        "fases siguientes del estudio.")
+        "El efecto del cambio de dominio se cuantifica comparando el F1 macro de cada modelo en Mendeley "
+        "(intra-dataset) con su F1 macro en cada dominio objetivo (cross-dataset), mediante tres "
+        "indicadores de robustez:")
     vinetas(doc, [
-        ("ViT-Base/16", "F1 macro OOF/pooled 96.96%; Accuracy OOF/pooled 96.96%; AUC OOF/pooled 0.9900; "
-         "desviación estándar del F1 entre folds 0.28; 85.8M parámetros."),
-        ("DenseNet-121", "F1 macro OOF/pooled 95.66%; Accuracy OOF/pooled 95.66%; AUC OOF/pooled 0.9906; "
-         "desviación estándar del F1 entre folds 0.79; ~7.0M parámetros."),
-        ("Resultado del flujo", "Dos modelos de referencia de familias diferentes, seleccionados con "
-         "evidencia cuantitativa y trazable."),
+        ("Tasa de Retención del Desempeño", "TRD = (F1_objetivo / F1_fuente) × 100. Porcentaje del "
+         "desempeño de Mendeley que se conserva; 100% significa sin caída."),
+        ("Brecha de error", "Gap = Error_objetivo − Error_fuente, con Error = 1 − F1/100. Cuánto aumenta "
+         "el error al cambiar de dominio."),
+        ("Reducción de la Brecha de Error", "RBE = (Gap_DenseNet − Gap_modelo) / Gap_DenseNet × 100. "
+         "Cuánto reduce un modelo la brecha frente a DenseNet-121 (baseline CNN); RBE > 0 indica mejor "
+         "transferencia."),
     ])
-    alineacion(doc,
-        "La etapa cierra el proceso de evaluación base: las 8,000 imágenes originan cinco particiones; "
-        "las particiones alimentan 50 entrenamientos modelo–fold; cada entrenamiento genera un mejor "
-        "checkpoint; los checkpoints producen resultados de test; los resultados se consolidan y "
-        "comparan; y esa comparación sustenta la selección final de ViT-Base/16 y DenseNet-121.")
+    rotulo(doc, "Tabla 3.4", "Degradación y robustez de los modelos de referencia ante el cambio de dominio")
+    filas = []
+    for m in ELEGIDOS:
+        f1_src = float(por_modelo[m]["f1"])
+        for dom in ("Trucha", "Rohu"):
+            c = CROSS_DATASET[(m, dom)]
+            filas.append((NOMBRES[m], dom, f"{f1_src:.2f}", f"{c['f1']:.2f}", f"{c['f1'] - f1_src:+.2f}",
+                          f"{c['trd']:.2f}", f"{c['gap']:.4f}", "—" if c["rbe"] is None else f"{c['rbe']:.2f}"))
+    tabla(doc, ["Modelo", "Dominio objetivo", "F1 Mendeley (%)", "F1 objetivo (%)", "Variación (pp)",
+                "TRD (%)", "Gap", "RBE (%)"], filas, [2.8, 2.0, 2.0, 2.0, 1.9, 1.7, 1.6, 1.6])
+    fuente(doc, "Nota. RBE se calcula respecto a DenseNet-121, por lo que no aplica al propio baseline. "
+                "Fuente: Indicadores_Robustez_TRD_Gap_RBE.docx (repositorio Generalizacion_ViT_DenseNet).")
+    vt, vr = CROSS_DATASET[("vit_base_patch16_224", "Trucha")], CROSS_DATASET[("vit_base_patch16_224", "Rohu")]
+    dt, dr = CROSS_DATASET[("densenet121", "Trucha")], CROSS_DATASET[("densenet121", "Rohu")]
+    parrafo(doc,
+        f"Ambos modelos pierden desempeño al cambiar de dominio. ViT-Base/16 cae de {vit['f1']}% a "
+        f"{vt['f1']:.2f}% en Trucha y a {vr['f1']:.2f}% en Rohu; DenseNet-121 cae de {dn['f1']}% a "
+        f"{dt['f1']:.2f}% y {dr['f1']:.2f}%. Como el procesamiento de la sección 3.2 iguala el encuadre y "
+        "la resolución, esa pérdida se asocia a la variabilidad visual entre conjuntos (iluminación, "
+        "cámara, fondo y especie).")
+    parrafo(doc,
+        f"ViT-Base/16 es más robusto que DenseNet-121 en los dos dominios: retiene más desempeño (TRD "
+        f"{vt['trd']:.2f}% frente a {dt['trd']:.2f}% en Trucha y {vr['trd']:.2f}% frente a {dr['trd']:.2f}% "
+        f"en Rohu), tiene una brecha de error menor y su RBE es positivo ({vt['rbe']:.2f}% en Trucha y "
+        f"{vr['rbe']:.2f}% en Rohu). Para los dos modelos, la caída es mayor en Trucha que en Rohu.")
+    parrafo(doc,
+        "El cambio de dominio incluye también una diferencia de especie (Mendeley reúne 8 especies de "
+        "Indonesia; OneDrive es trucha de Perú y Kaggle es rohu de India). Por ello, la degradación medida "
+        "combina variabilidad de adquisición y diferencias propias de cada especie.")
+    resultado(doc, "magnitud del efecto del cambio de dominio y robustez comparada de los modelos de "
+                   "referencia.")
+
+    # 3.9 ---------------------------------------------------------------------
+    doc.add_heading("3.9. Consolidación de la línea base experimental", level=2)
+    parrafo(doc,
+        "La Tabla 3.5 reúne los resultados de ambas fases para los dos modelos de referencia. Constituye "
+        "la línea base experimental frente a la cual se comparará el modelo propuesto en el Capítulo IV y "
+        "se validará en el Capítulo V.")
+    rotulo(doc, "Tabla 3.5", "Línea base experimental: resultados intra-dataset, cross-dataset y de retención")
+    filas = []
+    for m in ELEGIDOS:
+        r = por_modelo[m]
+        t, ro = CROSS_DATASET[(m, "Trucha")], CROSS_DATASET[(m, "Rohu")]
+        filas.append((NOMBRES[m], r["f1"], f'{float(r["auc"]):.4f}', f"{t['f1']:.2f}", f"{ro['f1']:.2f}",
+                      f"{t['trd']:.2f}", f"{ro['trd']:.2f}"))
+    tabla(doc, ["Modelo", "F1 Mendeley (%)", "AUC Mendeley", "F1 Trucha (%)", "F1 Rohu (%)",
+                "TRD Trucha (%)", "TRD Rohu (%)"], filas, [3.0, 2.3, 2.0, 2.2, 2.2, 2.2, 2.1])
+    fuente(doc)
+    vinetas(doc, [
+        ("Producto de la Fase 1", "ViT-Base/16 y DenseNet-121 como modelos de referencia, con F1 macro de "
+         f"{vit['f1']}% y {dn['f1']}% en el dominio fuente."),
+        ("Producto de la Fase 2", f"diagnóstico del problema: los modelos pierden entre {min(caidas):.2f} y "
+         f"{max(caidas):.2f} puntos de F1 al cambiar de dominio, y ViT-Base/16 transfiere mejor que "
+         "DenseNet-121."),
+        ("Uso posterior", "el modelo propuesto deberá superar esta línea base, en especial en los "
+         "escenarios cross-dataset."),
+    ])
+    resultado(doc, "línea base experimental consolidada y diagnóstico del efecto de la variabilidad visual.")
 
     doc.save(OUT)
     print(f"Guardado en {OUT}")
