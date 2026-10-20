@@ -478,7 +478,7 @@ def main():
         ("Entrenamientos", "10 modelos × 5 folds = 50."),
         ("Checkpoint que pasa a prueba", "el de mejor val_F1 macro del fold."),
         ("Detalle por modelo", "curvas de val_F1 por epoch y resultados por fold en "
-         "Documentacion_Tecnica_10_Modelos.docx, sección 3.4."),
+         "Documentacion_Tecnica_10_Modelos.docx, sección 4."),
     ])
     resultado(doc, "50 checkpoints entrenados, cinco por modelo candidato.")
 
@@ -511,8 +511,8 @@ def main():
         "95.4% y 97.0% de F1; los seis restantes, entre 89.0% y 94.3%. Como el conjunto está balanceado, "
         "exactitud, sensibilidad y especificidad coinciden prácticamente con el F1.")
     resultado(doc, "desempeño comparativo de los diez modelos candidatos. Comparación completa en "
-                   "Documentacion_Tecnica_10_Modelos.docx, sección 3.5; matrices de confusión, curvas ROC y "
-                   "cálculos por fold de cada modelo en su sección 3.4.")
+                   "Documentacion_Tecnica_10_Modelos.docx, sección 3; matrices de confusión, curvas ROC y "
+                   "cálculos por fold de cada modelo en su sección 4.")
 
     # 3.6 ---------------------------------------------------------------------
     doc.add_heading("3.6. Selección de los modelos de referencia", level=2)
@@ -537,7 +537,7 @@ def main():
         "referencia. Ninguno de los dos es el modelo propuesto de la tesis: ambos forman la línea base "
         "experimental frente a la cual se comparará el modelo propuesto.")
     resultado(doc, "modelos de referencia ViT-Base/16 y DenseNet-121 (línea base experimental). Sustento "
-                   "detallado en Sustento_Seleccion_Modelos.docx (sección 3.6).")
+                   "detallado en Sustento_Seleccion_Modelos.docx.")
 
     # 3.7 ---------------------------------------------------------------------
     doc.add_heading("3.7. Evaluación cross-dataset de los modelos de referencia", level=2)

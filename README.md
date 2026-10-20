@@ -55,9 +55,9 @@ La documentación sigue la estructura del Capítulo III: Evaluación de Modelos 
 |---|---|---|
 | 3.1 | Introducción, Figura 3.1 (flujo) y Tabla 3.1 (correspondencia con el método) | `Flujo_Metodologico_Capitulo_III.docx` |
 | 3.2 | Conjuntos de datos (Mendeley, Trucha, Rohu) y preparación | `Flujo_Metodologico_Capitulo_III.docx` |
-| 3.3 | Diseño experimental: partición 5-fold (semilla 42), hiperparámetros, métricas | Capítulo + `Documentacion_Tecnica_10_Modelos.docx` §3.3 |
-| 3.4 | Implementación: entrenamiento de los 10 modelos, detalle por modelo | Capítulo + `Documentacion_Tecnica_10_Modelos.docx` §3.4 |
-| 3.5 | Evaluación intra-dataset (Tabla 3.2) | Capítulo + `Documentacion_Tecnica_10_Modelos.docx` §3.5 + `Tabla_Mendeley_10_Modelos_ViT_DenseNet.docx` |
+| 3.3 | Diseño experimental: partición 5-fold (semilla 42), hiperparámetros, métricas | Capítulo + `Documentacion_Tecnica_10_Modelos.docx` §1–2 |
+| 3.4 | Implementación: entrenamiento de los 10 modelos, detalle por modelo | Capítulo + `Documentacion_Tecnica_10_Modelos.docx` §4 |
+| 3.5 | Evaluación intra-dataset (Tabla 3.2) | Capítulo + `Documentacion_Tecnica_10_Modelos.docx` §3 + `Tabla_Mendeley_10_Modelos_ViT_DenseNet.docx` |
 | 3.6 | Selección de ViT-Base/16 y DenseNet-121 | Capítulo + `Sustento_Seleccion_Modelos.docx` |
 | 3.7 | Evaluación cross-dataset (método congelado) | Capítulo (datos del repo `Generalizacion_ViT_DenseNet`) |
 | 3.8 | Análisis de la variabilidad visual: TRD, Gap, RBE | Capítulo (datos del repo `Generalizacion_ViT_DenseNet`) |
@@ -72,7 +72,7 @@ La documentación sigue la estructura del Capítulo III: Evaluación de Modelos 
 | `3_resultados_test_por_modelo/` | Matrices de confusión y curvas ROC (por fold y pooled) de cada uno de los 10 modelos, más `metricas_pooled_por_modelo.csv` y `metricas_por_fold.csv` |
 | `4_graficas/` | Gráficas agregadas: área bajo curva, curvas ROC, matrices de confusión de los 10 modelos |
 | `5_graficas_informe/` | Gráficas usadas en el informe (AUC, F1 y estabilidad, parámetros vs. F1, precisión vs. recall) |
-| `6_documentacion/` | `Flujo_Metodologico_Capitulo_III.docx` (Capítulo III completo, secciones 3.1–3.9, generado con `1_codigo/generar_flujo_metodologico.py`), `Documentacion_Tecnica_10_Modelos.docx` (anexo de las secciones 3.3–3.5, detalle por epoch/fold) y `Sustento_Seleccion_Modelos.docx` (anexo de la sección 3.6, criterios de selección) |
+| `6_documentacion/` | `Flujo_Metodologico_Capitulo_III.docx` (Capítulo III completo, secciones 3.1–3.9, generado con `1_codigo/generar_flujo_metodologico.py`), `Documentacion_Tecnica_10_Modelos.docx` (detalle completo de los 10 modelos por epoch/fold) y `Sustento_Seleccion_Modelos.docx` (criterios de selección de los 2 modelos elegidos) |
 | `7_graficas_por_modelo/` | Matrices de confusión, curvas ROC y curvas de épocas, una por modelo, para los 10 modelos |
 
 ## Entrenamiento y evaluación
