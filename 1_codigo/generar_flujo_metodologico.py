@@ -18,6 +18,7 @@ Salida: 6_documentacion/Flujo_Metodologico_Capitulo_III.docx
 """
 import csv
 import io
+import re
 import statistics
 import textwrap
 
@@ -36,6 +37,7 @@ OUT = "6_documentacion/Flujo_Metodologico_Capitulo_III.docx"
 FIG_OUT = "5_graficas_informe/flujo_metodologico.png"
 CSV_POOLED = "3_resultados_test_por_modelo/metricas_pooled_por_modelo.csv"
 CSV_FOLDS = "3_resultados_test_por_modelo/metricas_por_fold.csv"
+LOG_ENTRENAMIENTO = "2_logs_entrenamiento/dnc_5fold_resume.log"
 
 NOMBRES = {
     "vit_base_patch16_224": "ViT-Base/16", "densenet121": "DenseNet-121",
@@ -71,6 +73,25 @@ def cargar_intra():
         r["f1_media"] = statistics.mean(f1s[m])
         r["f1_de"] = statistics.stdev(f1s[m])
     return sorted(pooled.values(), key=lambda r: -float(r["f1"]))
+
+
+def epochs_por_modelo():
+    """Epochs ejecutados por (modelo, fold) segun el log de entrenamiento. El log es de la
+    corrida reanudada: no incluye ViT-Base/16 folds 1-2 ni EfficientNet-Lite0/MobileNetV3-Small."""
+    epochs, actual = {}, None
+    for linea in open(LOG_ENTRENAMIENTO):
+        m = re.match(r"--- (\S+) fold (\d) ---", linea)
+        if m:
+            actual = (m.group(1), int(m.group(2)))
+            epochs[actual] = 0
+            continue
+        m = re.match(r"\s+epoch\s+(\d+)/\d+\s+val_F1=", linea)
+        if m and actual:
+            epochs[actual] = int(m.group(1))
+    por_modelo = {}
+    for (modelo, fold), e in epochs.items():
+        por_modelo.setdefault(modelo, {})[fold] = e
+    return por_modelo
 
 
 # --- Figura 3.1 ---------------------------------------------------------------
@@ -474,6 +495,31 @@ def main():
         "Los pesos se aprenden con entrenamiento, el checkpoint se elige con validación y el desempeño se "
         "mide con prueba. Esta separación evita usar la prueba para tomar decisiones durante el "
         "entrenamiento.")
+    parrafo(doc,
+        "Cada corrida experimental corresponde a un fold: el modelo se entrena con cuatro folds "
+        "(entrenamiento + validación) y se evalúa una vez sobre el fold restante (prueba). La Tabla 3.2 "
+        "resume las corridas de cada modelo.")
+    rotulo(doc, "Tabla 3.2", "Corridas experimentales por modelo candidato")
+    ep = epochs_por_modelo()
+    filas = []
+    for r in intra:
+        folds = ep.get(r["model"], {})
+        if len(folds) == 5:
+            txt = str(sum(folds.values()))
+        elif folds:
+            txt = f"{sum(folds.values())} documentados (folds {min(folds)}–{max(folds)})"
+        else:
+            txt = "sin registro en el log"
+        filas.append((NOMBRES[r["model"]], "5", txt, "5", "1,600 × 5 = 8,000"))
+    filas.append(("Total", "50", "—", "50", "80,000"))
+    tabla(doc, ["Modelo", "Corridas (folds)", "Epochs ejecutados", "Evaluaciones de prueba",
+                "Predicciones OOF"], filas, [3.5, 2.2, 4.4, 2.6, 3.3], resaltar=(len(filas) - 1,))
+    fuente(doc, "Nota. Epochs ejecutados = suma de los 5 folds (máximo 30 por fold; menos de 150 indica "
+                "early stopping: Swin-Base se detuvo en el epoch 25 del fold 4 y ResNet-50 en el 28 del fold "
+                "3). El entrenamiento se interrumpió y se reanudó; el log conservado "
+                f"({LOG_ENTRENAMIENTO}) no incluye ViT-Base/16 folds 1 y 2 ni EfficientNet-Lite0 y "
+                "MobileNetV3-Small. Sus checkpoints y resultados de prueba sí existen y forman parte de las "
+                "Tablas 3.3 y siguientes; solo falta la curva de val_F1 por epoch.")
     vinetas(doc, [
         ("Entrenamientos", "10 modelos × 5 folds = 50."),
         ("Checkpoint que pasa a prueba", "el de mejor val_F1 macro del fold."),
@@ -491,7 +537,7 @@ def main():
         "entrenamiento. Sobre ellas se recalculan las métricas globales (pooled); la matriz de confusión "
         "pooled es la suma de las cinco matrices de prueba. Además, se reporta el F1 de los cinco folds "
         "como media ± desviación estándar.")
-    rotulo(doc, "Tabla 3.2", "Desempeño intra-dataset de los diez modelos candidatos en Mendeley (pooled, "
+    rotulo(doc, "Tabla 3.3", "Desempeño intra-dataset de los diez modelos candidatos en Mendeley (pooled, "
                              "8,000 predicciones OOF)")
     filas, resaltar = [], []
     for k, r in enumerate(intra):
@@ -559,7 +605,7 @@ def main():
          "duplicar el conjunto de entrenamiento (sin x2)."),
         ("Evaluación", "sobre la validación del fold; el F1 oficial es la media de los cinco folds."),
     ])
-    rotulo(doc, "Tabla 3.3", "Desempeño cross-dataset de los modelos de referencia (método congelado)")
+    rotulo(doc, "Tabla 3.4", "Desempeño cross-dataset de los modelos de referencia (método congelado)")
     filas = []
     for m in ELEGIDOS:
         for dom in ("Trucha", "Rohu"):
@@ -589,7 +635,7 @@ def main():
          "Cuánto reduce un modelo la brecha frente a DenseNet-121 (baseline CNN); RBE > 0 indica mejor "
          "transferencia."),
     ])
-    rotulo(doc, "Tabla 3.4", "Degradación y robustez de los modelos de referencia ante el cambio de dominio")
+    rotulo(doc, "Tabla 3.5", "Degradación y robustez de los modelos de referencia ante el cambio de dominio")
     filas = []
     for m in ELEGIDOS:
         f1_src = float(por_modelo[m]["f1"])
@@ -624,10 +670,10 @@ def main():
     # 3.9 ---------------------------------------------------------------------
     doc.add_heading("3.9. Consolidación de la línea base experimental", level=2)
     parrafo(doc,
-        "La Tabla 3.5 reúne los resultados de ambas fases para los dos modelos de referencia. Constituye "
+        "La Tabla 3.6 reúne los resultados de ambas fases para los dos modelos de referencia. Constituye "
         "la línea base experimental frente a la cual se comparará el modelo propuesto en el Capítulo IV y "
         "se validará en el Capítulo V.")
-    rotulo(doc, "Tabla 3.5", "Línea base experimental: resultados intra-dataset, cross-dataset y de retención")
+    rotulo(doc, "Tabla 3.6", "Línea base experimental: resultados intra-dataset, cross-dataset y de retención")
     filas = []
     for m in ELEGIDOS:
         r = por_modelo[m]
