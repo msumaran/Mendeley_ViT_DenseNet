@@ -38,6 +38,8 @@ FIG_OUT = "5_graficas_informe/flujo_metodologico.png"
 CSV_POOLED = "3_resultados_test_por_modelo/metricas_pooled_por_modelo.csv"
 CSV_FOLDS = "3_resultados_test_por_modelo/metricas_por_fold.csv"
 LOG_ENTRENAMIENTO = "2_logs_entrenamiento/dnc_5fold_resume.log"
+# Reentreno de los 12 folds sin curva en el log anterior; solo aporta epochs, no metricas
+LOG_REENTRENO = "2_logs_entrenamiento/dnc_reentreno_curvas.log"
 
 NOMBRES = {
     "vit_base_patch16_224": "ViT-Base/16", "densenet121": "DenseNet-121",
@@ -76,18 +78,20 @@ def cargar_intra():
 
 
 def epochs_por_modelo():
-    """Epochs ejecutados por (modelo, fold) segun el log de entrenamiento. El log es de la
-    corrida reanudada: no incluye ViT-Base/16 folds 1-2 ni EfficientNet-Lite0/MobileNetV3-Small."""
-    epochs, actual = {}, None
-    for linea in open(LOG_ENTRENAMIENTO):
-        m = re.match(r"--- (\S+) fold (\d) ---", linea)
-        if m:
-            actual = (m.group(1), int(m.group(2)))
-            epochs[actual] = 0
-            continue
-        m = re.match(r"\s+epoch\s+(\d+)/\d+\s+val_F1=", linea)
-        if m and actual:
-            epochs[actual] = int(m.group(1))
+    """Epochs ejecutados por (modelo, fold). El log de la corrida reanudada no incluye ViT-Base/16
+    folds 1-2 ni EfficientNet-Lite0/MobileNetV3-Small; esos folds salen del log de reentreno."""
+    epochs = {}
+    for log in (LOG_REENTRENO, LOG_ENTRENAMIENTO):  # el original pisa al reentreno si ambos tienen el fold
+        actual = None
+        for linea in open(log):
+            m = re.match(r"--- (\S+) fold (\d) ---", linea)
+            if m:
+                actual = (m.group(1), int(m.group(2)))
+                epochs[actual] = 0
+                continue
+            m = re.match(r"\s+epoch\s+(\d+)/\d+\s+val_F1=", linea)
+            if m and actual:
+                epochs[actual] = int(m.group(1))
     por_modelo = {}
     for (modelo, fold), e in epochs.items():
         por_modelo.setdefault(modelo, {})[fold] = e
@@ -511,15 +515,20 @@ def main():
         else:
             txt = "sin registro en el log"
         filas.append((NOMBRES[r["model"]], "5", txt, "5", "1,600 × 5 = 8,000"))
-    filas.append(("Total", "50", "—", "50", "80,000"))
+    total = sum(sum(f.values()) for f in ep.values() if len(f) == 5)
+    completos = all(len(ep.get(r["model"], {})) == 5 for r in intra)
+    filas.append(("Total", "50", f"{total:,}" if completos else "—", "50", "80,000"))
     tabla(doc, ["Modelo", "Corridas (folds)", "Epochs ejecutados", "Evaluaciones de prueba",
                 "Predicciones OOF"], filas, [3.5, 2.2, 4.4, 2.6, 3.3], resaltar=(len(filas) - 1,))
     fuente(doc, "Nota. Epochs ejecutados = suma de los 5 folds (máximo 30 por fold; menos de 150 indica "
-                "early stopping: Swin-Base se detuvo en el epoch 25 del fold 4 y ResNet-50 en el 28 del fold "
-                "3). El entrenamiento se interrumpió y se reanudó; el log conservado "
+                "early stopping: Swin-Base se detuvo en el epoch 25 del fold 4, ResNet-50 en el 28 del fold "
+                "3, ViT-Base/16 en el 23 del fold 2 y EfficientNet-Lite0 en el 23 del fold 3). El "
+                "entrenamiento se interrumpió y se reanudó; el log de la corrida reanudada "
                 f"({LOG_ENTRENAMIENTO}) no incluye ViT-Base/16 folds 1 y 2 ni EfficientNet-Lite0 y "
-                "MobileNetV3-Small. Sus checkpoints y resultados de prueba sí existen y forman parte de las "
-                "Tablas 3.3 y siguientes; solo falta la curva de val_F1 por epoch.")
+                "MobileNetV3-Small. Esos 12 folds se reentrenaron con el mismo código, datos y semilla solo "
+                f"para recuperar su curva de val_F1 por epoch ({LOG_REENTRENO}). El reentreno reprodujo "
+                "exactamente el mejor val_F1 y el F1 de prueba de los 12 folds originales. Las métricas de "
+                "las Tablas 3.3 y siguientes son las originales; el reentreno no las reemplaza.")
     vinetas(doc, [
         ("Entrenamientos", "10 modelos × 5 folds = 50."),
         ("Checkpoint que pasa a prueba", "el de mejor val_F1 macro del fold."),

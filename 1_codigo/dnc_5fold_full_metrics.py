@@ -3,7 +3,10 @@ full fine-tune, replicando el entrenamiento de run_freshness_v3.py pero con
 StratifiedKFold(5) en vez de un unico split 70/15/15 fijo, para tener
 detalle por fold documentado (misma metodologia del split unico ya
 presentado: sin agrupar por foto base).
-Uso: dnc_5fold_full_metrics.py <modelo> <fold 1-5>
+Uso: dnc_5fold_full_metrics.py <modelo> <fold 1-5> [dir_salida]
+  dir_salida (opcional): guarda checkpoint y CSV ahi en vez de en
+  checkpoints_freshness_v3_4k_5fold/ y results_freshness_v3/, para reentrenar
+  (p. ej. solo para recuperar la curva por epoch) sin pisar los originales.
 """
 import os
 import sys
@@ -26,6 +29,7 @@ from run_freshness_v3 import (
 
 MNAME = sys.argv[1]
 FOLD = int(sys.argv[2])
+OUT_DIR = sys.argv[3] if len(sys.argv) > 3 else None
 NUM_CLASSES = 2
 SEED = 42
 np.random.seed(SEED)
@@ -95,7 +99,7 @@ def main():
 
     best_val_f1 = -1.0
     patience = 0
-    ckpt_dir = "checkpoints_freshness_v3_4k_5fold"
+    ckpt_dir = os.path.join(OUT_DIR, "checkpoints") if OUT_DIR else "checkpoints_freshness_v3_4k_5fold"
     os.makedirs(ckpt_dir, exist_ok=True)
     ckpt_path = os.path.join(ckpt_dir, f"{MNAME}_fold{FOLD}_best.pt")
 
@@ -154,7 +158,7 @@ def main():
     row = {"model": MNAME, "fold": FOLD, "n_test": len(te_s), "best_val_f1": round(best_val_f1, 2)}
     for k in ("accuracy", "macro_precision", "macro_recall", "macro_f1", "macro_specificity"):
         row[k] = round(tm[k], 2)
-    out = f"results_freshness_v3/fullmetrics_dnc_{MNAME}_fullfinetune_fold{FOLD}.csv"
+    out = os.path.join(OUT_DIR or "results_freshness_v3", f"fullmetrics_dnc_{MNAME}_fullfinetune_fold{FOLD}.csv")
     pd.DataFrame([row]).to_csv(out, index=False)
     print(f"Guardado en {out}  (total {time.time() - t0:.0f}s)", flush=True)
 
