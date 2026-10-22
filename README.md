@@ -47,33 +47,29 @@ sección "Por qué ViT-Base/16 y DenseNet-121" de ese mismo documento, y en deta
 [`6_documentacion/Sustento_Seleccion_Modelos.docx`](6_documentacion/Sustento_Seleccion_Modelos.docx)
 (actualizado a la selección vigente de 2 modelos, con los mismos criterios).
 
-## Estructura del Capítulo III
+## Documentación
 
-La documentación sigue la estructura del Capítulo III: Evaluación de Modelos Base.
+| Documento | Contenido |
+|---|---|
+| `6_documentacion/Documentacion_Tecnica_10_Modelos.docx` | Metodología en 8 etapas (datos, partición 5-fold, modelos, arquitectura del sistema, entrenamiento, evaluación, matriz pooled, comparación y selección), glosario de fórmulas (incluye OOF y pooled) y detalle de cada modelo por epoch, fold, ROC y cálculo pooled |
+| `6_documentacion/Sustento_Seleccion_Modelos.docx` | Criterios de selección de ViT-Base/16 y DenseNet-121 |
+| `Tabla_Mendeley_10_Modelos_ViT_DenseNet.docx` | Tabla comparativa de los 10 modelos con los 2 elegidos resaltados |
 
-| Sección | Contenido | Documento |
-|---|---|---|
-| 3.1 | Introducción, Figura 3.1 (flujo) y Tabla 3.1 (correspondencia con el método) | `Flujo_Metodologico_Capitulo_III.docx` |
-| 3.2 | Conjuntos de datos (Mendeley, Trucha, Rohu) y preparación | `Flujo_Metodologico_Capitulo_III.docx` |
-| 3.3 | Diseño experimental: partición 5-fold (semilla 42), hiperparámetros, métricas | Capítulo + `Documentacion_Tecnica_10_Modelos.docx` §1–2 |
-| 3.4 | Implementación: entrenamiento de los 10 modelos, detalle por modelo | Capítulo + `Documentacion_Tecnica_10_Modelos.docx` §4 |
-| 3.5 | Evaluación intra-dataset (Tabla 3.2) | Capítulo + `Documentacion_Tecnica_10_Modelos.docx` §3 + `Tabla_Mendeley_10_Modelos_ViT_DenseNet.docx` |
-| 3.6 | Selección de ViT-Base/16 y DenseNet-121 | Capítulo + `Sustento_Seleccion_Modelos.docx` |
-| 3.7 | Evaluación cross-dataset (método congelado) | Capítulo (datos del repo `Generalizacion_ViT_DenseNet`) |
-| 3.8 | Análisis de la variabilidad visual: TRD, Gap, RBE | Capítulo (datos del repo `Generalizacion_ViT_DenseNet`) |
-| 3.9 | Consolidación de la línea base experimental | `Flujo_Metodologico_Capitulo_III.docx` |
+La evaluación cross-dataset (Trucha y Rohu) de los 2 modelos elegidos, con indicadores TRD, Gap y
+RBE, está en el repo `Generalizacion_ViT_DenseNet` (`Documentacion_Tecnica_ViT_DenseNet.docx`, con la
+misma estructura que la documentación técnica de este repo).
 
 ## Contenido
 
 | Carpeta | Contenido |
 |---|---|
-| `1_codigo/` | `config.py`, `dataset_freshness.py`, `dnc_5fold_confmat_roc.py`, `dnc_5fold_full_metrics.py`, `dnc_graficas_organizadas.py`, `metrics.py`, `models.py`, `run_freshness_v3.py`, `generar_flujo_metodologico.py` — utilidades compartidas y scripts de entrenamiento/evaluación de los 10 modelos |
+| `1_codigo/` | `config.py`, `dataset_freshness.py`, `dnc_5fold_confmat_roc.py`, `dnc_5fold_full_metrics.py`, `dnc_graficas_organizadas.py`, `metrics.py`, `models.py`, `run_freshness_v3.py`, `generar_arquitectura_sistema.py` — utilidades compartidas y scripts de entrenamiento/evaluación de los 10 modelos |
 | `2_logs_entrenamiento/` | Logs de la corrida de entrenamiento (5-fold) y de la generación de matrices de confusión/ROC de los 10 modelos |
 | `3_resultados_test_por_modelo/` | Matrices de confusión y curvas ROC (por fold y pooled) de cada uno de los 10 modelos, más `metricas_pooled_por_modelo.csv` y `metricas_por_fold.csv` |
 | `4_graficas/` | Gráficas agregadas: área bajo curva, curvas ROC, matrices de confusión de los 10 modelos |
 | `5_graficas_informe/` | Gráficas usadas en el informe (AUC, F1 y estabilidad, parámetros vs. F1, precisión vs. recall) |
-| `6_documentacion/` | `Flujo_Metodologico_Capitulo_III.docx` (Capítulo III completo, secciones 3.1–3.9, generado con `1_codigo/generar_flujo_metodologico.py`), `Documentacion_Tecnica_10_Modelos.docx` (detalle completo de los 10 modelos por epoch/fold) y `Sustento_Seleccion_Modelos.docx` (criterios de selección de los 2 modelos elegidos) |
-| `7_graficas_por_modelo/` | Matrices de confusión, curvas ROC y curvas de épocas, una por modelo, para los 10 modelos |
+| `6_documentacion/` | `Documentacion_Tecnica_10_Modelos.docx` (ordenado por las 8 etapas del flujo metodológico, con el cálculo de la matriz pooled de los 10 modelos y el detalle de cada modelo por epoch/fold) y `Sustento_Seleccion_Modelos.docx` (criterios de selección de los 2 modelos elegidos) |
+| `7_graficas_por_modelo/` | Matrices de confusión, curvas ROC y curvas de épocas, una por modelo, para los 10 modelos; `arquitectura_sistema.png` (arquitectura del sistema, sección 1.3 de la documentación técnica, generada con `1_codigo/generar_arquitectura_sistema.py`) |
 
 ## Entrenamiento y evaluación
 
