@@ -1,19 +1,19 @@
-"""Genera la figura de arquitectura del sistema (pipeline DNC 5-fold) usada en
-Documentacion_Tecnica_10_Modelos.docx, seccion 1.3.
+"""Genera la figura anterior de arquitectura del sistema (pipeline DNC 5-fold).
+La documentación vigente usa arquitectura_sistema_7_etapas.png en la sección 1.2.2.
 
 Estructura en 4 etapas (ingesta -> entrenamiento -> evaluacion -> reportes),
 con las fuentes de datos, el almacenamiento local y los entregables abajo.
 
 Uso (desde la raiz del repo; requiere matplotlib):
-    python 1_codigo/generar_arquitectura_sistema.py
-Salida: 7_graficas_por_modelo/arquitectura_sistema.png
+    python utilitarios/diagramas/version_anterior/generar_arquitectura_sistema.py
+Salida: 6_documentacion/diagramas/version_anterior/arquitectura_sistema.png
 """
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch, Rectangle, Circle
 
-OUT = "7_graficas_por_modelo/arquitectura_sistema.png"
+OUT = "6_documentacion/diagramas/version_anterior/arquitectura_sistema.png"
 
 NARANJA, NARANJA_BORDE = "#F4B183", "#E07B39"
 AZUL, AZUL_BORDE = "#DAE6F4", "#6F8FBF"

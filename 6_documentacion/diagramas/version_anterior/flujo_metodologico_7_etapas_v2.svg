@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1542" viewBox="0 0 2400 1542"><defs><marker id="m148f87" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#148f87"/></marker><marker id="m5154a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#5154a1"/></marker><marker id="m526c79" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#526c79"/></marker><marker id="ma42b69" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#a42b69"/></marker><marker id="mc8930b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#c8930b"/></marker><marker id="mdd861a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#dd861a"/></marker><marker id="me0a800" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#e0a800"/></marker></defs><rect width="2400" height="1542" fill="#f9fbfc"/>
+<text x="60" y="88" font-family="Arial,Helvetica,sans-serif" font-size="46" fill="#102f45" font-weight="bold" text-anchor="start">FLUJO METODOLÓGICO · MENDELEY DNC</text>
+<text x="62" y="136" font-family="Arial,Helvetica,sans-serif" font-size="27" fill="#597482" font-weight="normal" text-anchor="start">Siete etapas, desde los datos hasta la selección de ViT-Base/16 y DenseNet-121</text>
+<rect x="40" y="168" width="2320" height="64" rx="12" fill="#102f45" stroke="none" stroke-width="2" />
+<text x="110" y="210" font-family="Arial,Helvetica,sans-serif" font-size="22" fill="#fff" font-weight="bold" text-anchor="start">N.º</text>
+<text x="200" y="210" font-family="Arial,Helvetica,sans-serif" font-size="22" fill="#fff" font-weight="bold" text-anchor="start">ETAPA · QUÉ SE HACE</text>
+<text x="1560" y="210" font-family="Arial,Helvetica,sans-serif" font-size="22" fill="#fff" font-weight="bold" text-anchor="start">SALIDA · ARTEFACTO</text>
+<path d="M136 310 V1366" stroke="#c9d9de" stroke-width="6"/>
+<rect x="40" y="262" width="2320" height="158" rx="14" fill="#fff" stroke="#dd861a" stroke-width="2" />
+<rect x="40" y="262" width="12" height="158" rx="6" fill="#dd861a" stroke="none" stroke-width="2" />
+<circle cx="136" cy="310" r="40" fill="#dd861a"/>
+<text x="136" y="325" font-family="Arial,Helvetica,sans-serif" font-size="40" fill="#fff" font-weight="bold" text-anchor="middle">1</text>
+<circle cx="136" cy="376" r="24" fill="#fff" stroke="#dd861a" stroke-width="2"/>
+<g transform="translate(136 376) scale(0.9)" fill="none" stroke="#dd861a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M-17 0 Q-4 -15 10 0 Q-4 15 -17 0Z"/><path d="M10 0 L19 -8 V8Z"/><circle cx="-8" cy="-2" r="1.8" fill="#dd861a"/></g>
+<text x="200" y="322" font-family="Arial,Helvetica,sans-serif" font-size="30" fill="#102f45" font-weight="bold" text-anchor="start">Preparación de datos</text>
+<text x="200" y="362" font-family="Arial,Helvetica,sans-serif" font-size="23" fill="#243f51" font-weight="normal" text-anchor="start">Lectura de rutas y etiquetas de las 8 000 imágenes (4 000 fresco · 4 000 no fresco).</text>
+<path d="M1530 282 V400" stroke="#e1eaed" stroke-width="2"/>
+<text x="1560" y="326" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#dd861a" font-weight="bold" text-anchor="start">Rutas y etiquetas</text>
+<rect x="1560" y="350" width="222.20000000000002" height="32" rx="16" fill="#eef3f5" stroke="none" stroke-width="2" />
+<text x="1573" y="372" font-family="Menlo,Consolas,monospace" font-size="18" fill="#46606d" font-weight="normal" text-anchor="start">collect_dnc_only()</text>
+<rect x="40" y="438" width="2320" height="158" rx="14" fill="#fff" stroke="#c8930b" stroke-width="2" />
+<rect x="40" y="438" width="12" height="158" rx="6" fill="#c8930b" stroke="none" stroke-width="2" />
+<circle cx="136" cy="486" r="40" fill="#c8930b"/>
+<text x="136" y="501" font-family="Arial,Helvetica,sans-serif" font-size="40" fill="#fff" font-weight="bold" text-anchor="middle">2</text>
+<circle cx="136" cy="552" r="24" fill="#fff" stroke="#c8930b" stroke-width="2"/>
+<g transform="translate(136 552) scale(0.9)" fill="none" stroke="#c8930b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="-19" y="-14" width="6" height="28"/><rect x="-11" y="-14" width="6" height="28"/><rect x="-3" y="-14" width="6" height="28" fill="#c8930b"/><rect x="5" y="-14" width="6" height="28"/><rect x="13" y="-14" width="6" height="28"/></g>
+<text x="200" y="498" font-family="Arial,Helvetica,sans-serif" font-size="30" fill="#102f45" font-weight="bold" text-anchor="start">Preparación del experimento</text>
+<text x="200" y="538" font-family="Arial,Helvetica,sans-serif" font-size="23" fill="#243f51" font-weight="normal" text-anchor="start">StratifiedKFold (k = 5, seed 42): train 68 % · val 12 % · test 20 % por fold. Construcción de</text>
+<text x="200" y="570" font-family="Arial,Helvetica,sans-serif" font-size="23" fill="#243f51" font-weight="normal" text-anchor="start">los 10 modelos con pesos ImageNet.</text>
+<path d="M1530 458 V576" stroke="#e1eaed" stroke-width="2"/>
+<text x="1560" y="502" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#c8930b" font-weight="bold" text-anchor="start">Índices por fold · modelos</text>
+<rect x="1560" y="526" width="124.10000000000001" height="32" rx="16" fill="#eef3f5" stroke="none" stroke-width="2" />
+<text x="1573" y="548" font-family="Menlo,Consolas,monospace" font-size="18" fill="#46606d" font-weight="normal" text-anchor="start">models.py</text>
+<rect x="40" y="614" width="2320" height="158" rx="14" fill="#fff" stroke="#5154a1" stroke-width="2" />
+<rect x="40" y="614" width="12" height="158" rx="6" fill="#5154a1" stroke="none" stroke-width="2" />
+<circle cx="136" cy="662" r="40" fill="#5154a1"/>
+<text x="136" y="677" font-family="Arial,Helvetica,sans-serif" font-size="40" fill="#fff" font-weight="bold" text-anchor="middle">3</text>
+<circle cx="136" cy="728" r="24" fill="#fff" stroke="#5154a1" stroke-width="2"/>
+<g transform="translate(136 728) scale(0.9)" fill="none" stroke="#5154a1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="-12" y="-12" width="24" height="24" rx="3"/><rect x="-5" y="-5" width="10" height="10" fill="#5154a1"/><path d="M-6 -12 V-18 M0 -12 V-18 M6 -12 V-18 M-6 12 V18 M0 12 V18 M6 12 V18 M-12 -6 H-18 M-12 0 H-18 M-12 6 H-18 M12 -6 H18 M12 0 H18 M12 6 H18"/></g>
+<text x="200" y="674" font-family="Arial,Helvetica,sans-serif" font-size="30" fill="#102f45" font-weight="bold" text-anchor="start">Entrenamiento y checkpoint</text>
+<text x="200" y="714" font-family="Arial,Helvetica,sans-serif" font-size="23" fill="#243f51" font-weight="normal" text-anchor="start">Focal Loss + AdamW hasta 30 épocas con early stopping (paciencia 7); se guarda la época con</text>
+<text x="200" y="746" font-family="Arial,Helvetica,sans-serif" font-size="23" fill="#243f51" font-weight="normal" text-anchor="start">mejor val_F1.</text>
+<path d="M1530 634 V752" stroke="#e1eaed" stroke-width="2"/>
+<text x="1560" y="678" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#5154a1" font-weight="bold" text-anchor="start">50 checkpoints .pt</text>
+<rect x="1560" y="702" width="244.0" height="32" rx="16" fill="#eef3f5" stroke="none" stroke-width="2" />
+<text x="1573" y="724" font-family="Menlo,Consolas,monospace" font-size="18" fill="#46606d" font-weight="normal" text-anchor="start">checkpoints_*_5fold/</text>
+<rect x="40" y="790" width="2320" height="158" rx="14" fill="#fff" stroke="#a42b69" stroke-width="2" />
+<rect x="40" y="790" width="12" height="158" rx="6" fill="#a42b69" stroke="none" stroke-width="2" />
+<circle cx="136" cy="838" r="40" fill="#a42b69"/>
+<text x="136" y="853" font-family="Arial,Helvetica,sans-serif" font-size="40" fill="#fff" font-weight="bold" text-anchor="middle">4</text>
+<circle cx="136" cy="904" r="24" fill="#fff" stroke="#a42b69" stroke-width="2"/>
+<g transform="translate(136 904) scale(0.9)" fill="none" stroke="#a42b69" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle r="16"/><circle r="9.5"/><circle r="3" fill="#a42b69"/><path d="M3 -3 L17 -17 M11 -17 H17 V-11"/></g>
+<text x="200" y="850" font-family="Arial,Helvetica,sans-serif" font-size="30" fill="#102f45" font-weight="bold" text-anchor="start">Evaluación sobre test</text>
+<text x="200" y="890" font-family="Arial,Helvetica,sans-serif" font-size="23" fill="#243f51" font-weight="normal" text-anchor="start">Inferencia sin reentrenar sobre el test reservado de cada fold: matriz de confusión, ROC y AUC.</text>
+<path d="M1530 810 V928" stroke="#e1eaed" stroke-width="2"/>
+<text x="1560" y="854" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#a42b69" font-weight="bold" text-anchor="start">Predicciones por fold</text>
+<rect x="1560" y="878" width="287.6" height="32" rx="16" fill="#eef3f5" stroke="none" stroke-width="2" />
+<text x="1573" y="900" font-family="Menlo,Consolas,monospace" font-size="18" fill="#46606d" font-weight="normal" text-anchor="start">dnc_5fold_confmat_roc.py</text>
+<rect x="40" y="966" width="2320" height="158" rx="14" fill="#fff" stroke="#a42b69" stroke-width="2" />
+<rect x="40" y="966" width="12" height="158" rx="6" fill="#a42b69" stroke="none" stroke-width="2" />
+<circle cx="136" cy="1014" r="40" fill="#a42b69"/>
+<text x="136" y="1029" font-family="Arial,Helvetica,sans-serif" font-size="40" fill="#fff" font-weight="bold" text-anchor="middle">5</text>
+<circle cx="136" cy="1080" r="24" fill="#fff" stroke="#a42b69" stroke-width="2"/>
+<g transform="translate(136 1080) scale(0.9)" fill="none" stroke="#a42b69" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 -15 H-11 L3 0 L-11 15 H12" stroke-width="3.6"/></g>
+<text x="200" y="1026" font-family="Arial,Helvetica,sans-serif" font-size="30" fill="#102f45" font-weight="bold" text-anchor="start">Reunir resultados</text>
+<text x="200" y="1066" font-family="Arial,Helvetica,sans-serif" font-size="23" fill="#243f51" font-weight="normal" text-anchor="start">Se concatenan los 5 folds (8 000 predicciones por modelo) y se calculan métricas pooled y media</text>
+<text x="200" y="1098" font-family="Arial,Helvetica,sans-serif" font-size="23" fill="#243f51" font-weight="normal" text-anchor="start">± std por fold.</text>
+<path d="M1530 986 V1104" stroke="#e1eaed" stroke-width="2"/>
+<text x="1560" y="1030" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#a42b69" font-weight="bold" text-anchor="start">CSV de métricas</text>
+<rect x="1560" y="1054" width="342.1" height="32" rx="16" fill="#eef3f5" stroke="none" stroke-width="2" />
+<text x="1573" y="1076" font-family="Menlo,Consolas,monospace" font-size="18" fill="#46606d" font-weight="normal" text-anchor="start">3_resultados_test_por_modelo/</text>
+<rect x="40" y="1142" width="2320" height="158" rx="14" fill="#fff8e1" stroke="#e0a800" stroke-width="4" />
+<rect x="40" y="1142" width="12" height="158" rx="6" fill="#148f87" stroke="none" stroke-width="2" />
+<circle cx="136" cy="1190" r="40" fill="#148f87"/>
+<text x="136" y="1205" font-family="Arial,Helvetica,sans-serif" font-size="40" fill="#fff" font-weight="bold" text-anchor="middle">6</text>
+<circle cx="136" cy="1256" r="24" fill="#fff" stroke="#148f87" stroke-width="2"/>
+<g transform="translate(136 1256) scale(0.9)" fill="none" stroke="#148f87" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M-11 -16 H11 V-5 A11 11 0 0 1 -11 -5Z" fill="#148f87"/><path d="M-11 -12 H-17 V-8 A7 7 0 0 0 -10 0 M11 -12 H17 V-8 A7 7 0 0 1 10 0 M0 6 V12"/><rect x="-8" y="12" width="16" height="5" fill="#148f87"/></g>
+<text x="200" y="1202" font-family="Arial,Helvetica,sans-serif" font-size="30" fill="#102f45" font-weight="bold" text-anchor="start">Comparación y selección</text>
+<text x="200" y="1242" font-family="Arial,Helvetica,sans-serif" font-size="23" fill="#243f51" font-weight="normal" text-anchor="start">Se comparan F1, AUC, estabilidad y parámetros; se eligen ViT-Base/16 (F1 96.96 %) y</text>
+<text x="200" y="1274" font-family="Arial,Helvetica,sans-serif" font-size="23" fill="#243f51" font-weight="normal" text-anchor="start">DenseNet-121 (AUC 0.9906).</text>
+<path d="M1530 1162 V1280" stroke="#e1eaed" stroke-width="2"/>
+<text x="1560" y="1206" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#8a6400" font-weight="bold" text-anchor="start">Selección vigente: 2 modelos</text>
+<rect x="1560" y="1230" width="233.1" height="32" rx="16" fill="#eef3f5" stroke="none" stroke-width="2" />
+<text x="1573" y="1252" font-family="Menlo,Consolas,monospace" font-size="18" fill="#46606d" font-weight="normal" text-anchor="start">5_graficas_informe/</text>
+<rect x="2200" y="1164" width="130" height="36" rx="18" fill="#fff3c4" stroke="#e0a800" stroke-width="2" />
+<text x="2265" y="1189" font-family="Arial,Helvetica,sans-serif" font-size="19" fill="#8a6400" font-weight="bold" text-anchor="middle">TOP-2</text>
+<rect x="40" y="1318" width="2320" height="158" rx="14" fill="#fff" stroke="#148f87" stroke-width="2" />
+<rect x="40" y="1318" width="12" height="158" rx="6" fill="#148f87" stroke="none" stroke-width="2" />
+<circle cx="136" cy="1366" r="40" fill="#148f87"/>
+<text x="136" y="1381" font-family="Arial,Helvetica,sans-serif" font-size="40" fill="#fff" font-weight="bold" text-anchor="middle">7</text>
+<circle cx="136" cy="1432" r="24" fill="#fff" stroke="#148f87" stroke-width="2"/>
+<g transform="translate(136 1432) scale(0.9)" fill="none" stroke="#148f87" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M-12 -18 H6 L14 -10 V18 H-12Z M6 -18 V-10 H14"/><path d="M-6 -2 H8 M-6 5 H8 M-6 12 H4"/></g>
+<text x="200" y="1378" font-family="Arial,Helvetica,sans-serif" font-size="30" fill="#102f45" font-weight="bold" text-anchor="start">Documentación y trazabilidad</text>
+<text x="200" y="1418" font-family="Arial,Helvetica,sans-serif" font-size="23" fill="#243f51" font-weight="normal" text-anchor="start">Integración de resultados, gráficas y registros de ejecución en la documentación técnica.</text>
+<path d="M1530 1338 V1456" stroke="#e1eaed" stroke-width="2"/>
+<text x="1560" y="1382" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#148f87" font-weight="bold" text-anchor="start">Documentos .docx · logs</text>
+<rect x="1560" y="1406" width="200.4" height="32" rx="16" fill="#eef3f5" stroke="none" stroke-width="2" />
+<text x="1573" y="1428" font-family="Menlo,Consolas,monospace" font-size="18" fill="#46606d" font-weight="normal" text-anchor="start">6_documentacion/</text></svg>

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2470" height="660" viewBox="0 0 2470 660">
+<rect width="2470" height="660" fill="#ffffff"/>
+<text x="1235.0" y="78" font-family="Arial,Helvetica,sans-serif" font-size="44" font-weight="700" fill="#102f45" text-anchor="middle">El experimento Mendeley en 6 pasos</text>
+<text x="1235.0" y="124" font-family="Arial,Helvetica,sans-serif" font-size="26" fill="#597482" text-anchor="middle">Objetivo: elegir los dos modelos que después se prueban con otros peces</text>
+<rect x="40" y="190" width="340" height="440" rx="22" fill="#f4f8fa" stroke="#6b7f8a" stroke-width="4"/>
+<circle cx="210.0" cy="260" r="42" fill="#6b7f8a"/>
+<text x="210.0" y="274" font-family="Arial,Helvetica,sans-serif" font-size="38" font-weight="700" fill="#fff" text-anchor="middle">1</text>
+<text x="210.0" y="360" font-family="Arial,Helvetica,sans-serif" font-size="33" font-weight="700" fill="#17394d" text-anchor="middle">Fotos</text>
+<text x="210.0" y="430" font-family="Arial,Helvetica,sans-serif" font-size="36" font-weight="700" fill="#6b7f8a" text-anchor="middle">4,390</text>
+<text x="210.0" y="504" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">fotos de ojos</text>
+<text x="210.0" y="538" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">de pescado</text>
+<text x="210.0" y="572" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">(8 especies, Indonesia)</text>
+<path d="M388 390 H432" stroke="#5f7a89" stroke-width="6"/><path d="M428 376 L450 390 L428 404 Z" fill="#5f7a89"/>
+<rect x="450" y="190" width="340" height="440" rx="22" fill="#f4f8fa" stroke="#dd861a" stroke-width="4"/>
+<circle cx="620.0" cy="260" r="42" fill="#dd861a"/>
+<text x="620.0" y="274" font-family="Arial,Helvetica,sans-serif" font-size="38" font-weight="700" fill="#fff" text-anchor="middle">2</text>
+<text x="620.0" y="360" font-family="Arial,Helvetica,sans-serif" font-size="33" font-weight="700" fill="#17394d" text-anchor="middle">Balancear</text>
+<text x="620.0" y="430" font-family="Arial,Helvetica,sans-serif" font-size="36" font-weight="700" fill="#dd861a" text-anchor="middle">8,000</text>
+<text x="620.0" y="504" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">4,000 frescas y</text>
+<text x="620.0" y="538" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">4,000 no frescas</text>
+<text x="620.0" y="572" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">(con aumento de datos)</text>
+<path d="M798 390 H842" stroke="#5f7a89" stroke-width="6"/><path d="M838 376 L860 390 L838 404 Z" fill="#5f7a89"/>
+<rect x="860" y="190" width="340" height="440" rx="22" fill="#f4f8fa" stroke="#c8930b" stroke-width="4"/>
+<circle cx="1030.0" cy="260" r="42" fill="#c8930b"/>
+<text x="1030.0" y="274" font-family="Arial,Helvetica,sans-serif" font-size="38" font-weight="700" fill="#fff" text-anchor="middle">3</text>
+<text x="1030.0" y="360" font-family="Arial,Helvetica,sans-serif" font-size="33" font-weight="700" fill="#17394d" text-anchor="middle">Dividir</text>
+<text x="1030.0" y="430" font-family="Arial,Helvetica,sans-serif" font-size="36" font-weight="700" fill="#c8930b" text-anchor="middle">5 folds</text>
+<text x="1030.0" y="504" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">cada foto se usa</text>
+<text x="1030.0" y="538" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">una vez como examen</text>
+<path d="M1208 390 H1252" stroke="#5f7a89" stroke-width="6"/><path d="M1248 376 L1270 390 L1248 404 Z" fill="#5f7a89"/>
+<rect x="1270" y="190" width="340" height="440" rx="22" fill="#f4f8fa" stroke="#5154a1" stroke-width="4"/>
+<circle cx="1440.0" cy="260" r="42" fill="#5154a1"/>
+<text x="1440.0" y="274" font-family="Arial,Helvetica,sans-serif" font-size="38" font-weight="700" fill="#fff" text-anchor="middle">4</text>
+<text x="1440.0" y="360" font-family="Arial,Helvetica,sans-serif" font-size="33" font-weight="700" fill="#17394d" text-anchor="middle">Entrenar</text>
+<text x="1440.0" y="430" font-family="Arial,Helvetica,sans-serif" font-size="36" font-weight="700" fill="#5154a1" text-anchor="middle">10 modelos</text>
+<text x="1440.0" y="504" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">aprenden con las</text>
+<text x="1440.0" y="538" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">mismas fotos y reglas</text>
+<path d="M1618 390 H1662" stroke="#5f7a89" stroke-width="6"/><path d="M1658 376 L1680 390 L1658 404 Z" fill="#5f7a89"/>
+<rect x="1680" y="190" width="340" height="440" rx="22" fill="#f4f8fa" stroke="#a42b69" stroke-width="4"/>
+<circle cx="1850.0" cy="260" r="42" fill="#a42b69"/>
+<text x="1850.0" y="274" font-family="Arial,Helvetica,sans-serif" font-size="38" font-weight="700" fill="#fff" text-anchor="middle">5</text>
+<text x="1850.0" y="360" font-family="Arial,Helvetica,sans-serif" font-size="33" font-weight="700" fill="#17394d" text-anchor="middle">Examen</text>
+<text x="1850.0" y="430" font-family="Arial,Helvetica,sans-serif" font-size="36" font-weight="700" fill="#a42b69" text-anchor="middle">Fotos</text>
+<text x="1850.0" y="474" font-family="Arial,Helvetica,sans-serif" font-size="36" font-weight="700" fill="#a42b69" text-anchor="middle">no vistas</text>
+<text x="1850.0" y="548" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">cada modelo clasifica</text>
+<text x="1850.0" y="582" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">fotos que nunca vio</text>
+<path d="M2028 390 H2072" stroke="#5f7a89" stroke-width="6"/><path d="M2068 376 L2090 390 L2068 404 Z" fill="#5f7a89"/>
+<rect x="2090" y="190" width="340" height="440" rx="22" fill="#fff8e1" stroke="#b8860b" stroke-width="7"/>
+<circle cx="2260.0" cy="260" r="42" fill="#b8860b"/>
+<text x="2260.0" y="274" font-family="Arial,Helvetica,sans-serif" font-size="38" font-weight="700" fill="#fff" text-anchor="middle">6</text>
+<text x="2260.0" y="360" font-family="Arial,Helvetica,sans-serif" font-size="33" font-weight="700" fill="#17394d" text-anchor="middle">Elegir</text>
+<text x="2260.0" y="430" font-family="Arial,Helvetica,sans-serif" font-size="36" font-weight="700" fill="#b8860b" text-anchor="middle">2 modelos</text>
+<text x="2260.0" y="504" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">ViT-Base/16 (96.96 %)</text>
+<text x="2260.0" y="538" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">DenseNet-121 (95.66 %)</text>
+<text x="2260.0" y="572" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">uno de cada familia</text>
+</svg>

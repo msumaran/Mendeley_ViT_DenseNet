@@ -1,0 +1,48 @@
+@startuml uml_actividades_mendeley
+!include ../../../../herramientas_docx/uml/estilo.puml
+title Experimento Mendeley · Diagrama de actividades (UML)
+
+start
+partition "Antes del experimento" {
+  :Tomar 4,390 fotos de ojos (Mendeley);
+  :Agrupar en 2 clases\n(fresco 3,084 · no fresco 1,306);
+  :Aumento de datos hasta 4,000 por clase;
+}
+partition "Etapa 1 · Preparar datos" {
+  :Leer las 8,000 fotos (ruta y clase);
+}
+partition "Etapa 2 · Preparar experimento" {
+  :Dividir en 5 folds (StratifiedKFold, semilla 42);
+}
+repeat :Tomar el siguiente de los 10 modelos;
+  repeat :Tomar el siguiente fold (1 a 5);
+    partition "Etapa 2" {
+      :Separar test (20 %) y, del resto,\nentrenamiento (68 %) y validación (12 %);
+      :Cargar modelo preentrenado;
+    }
+    partition "Etapa 3 · Entrenar" {
+      repeat :Entrenar una época;
+        :Medir F1 en validación;
+        if (¿F1 mejoró?) then (sí)
+          :Guardar checkpoint (mejor versión);
+        else (no)
+        endif
+      repeat while (¿menos de 7 épocas sin mejora\ny menos de 30 épocas?) is (sí) not (no)
+    }
+    partition "Etapa 4 · Evaluar" {
+      :Cargar la mejor versión;
+      :Clasificar una sola vez el test del fold;
+    }
+  repeat while (¿quedan folds?) is (sí) not (no)
+  partition "Etapa 5 · Reunir resultados" {
+    :Juntar las respuestas de los 5 folds (8,000);
+    :Calcular matriz, F1 y AUC; guardar tablas y gráficas;
+  }
+repeat while (¿quedan modelos?) is (sí) not (no)
+partition "Etapas 6 y 7 · Comparar y documentar" {
+  :Comparar los 10 modelos (F1, AUC, estabilidad, tamaño);
+  :Elegir el mejor de cada familia\n(ViT-Base/16 y DenseNet-121);
+  :Documentar tablas, gráficas y registros;
+}
+stop
+@enduml

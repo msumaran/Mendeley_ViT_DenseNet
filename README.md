@@ -38,8 +38,8 @@ la selección activa del proyecto.
 Los 10 modelos y sus resultados completos se conservan sin cambios en todas las carpetas
 de este repositorio (ningún número se recalculó ni se volvió a entrenar) — se conserva
 todo el experimento de los 10 modelos por trazabilidad, y el documento
-[`Tabla_Mendeley_10_Modelos_ViT_DenseNet.docx`](Tabla_Mendeley_10_Modelos_ViT_DenseNet.docx)
-en la raíz es la versión actualizada de la tabla comparativa con solo ViT-Base/16 y
+[`6_documentacion/Tabla_Mendeley_10_Modelos_ViT_DenseNet.docx`](6_documentacion/Tabla_Mendeley_10_Modelos_ViT_DenseNet.docx)
+es la versión actualizada de la tabla comparativa con solo ViT-Base/16 y
 DenseNet-121 resaltados como elegidos.
 
 Justificación cuantitativa de por qué estos 2 (F1, AUC, estabilidad, eficiencia) en la
@@ -51,25 +51,26 @@ sección "Por qué ViT-Base/16 y DenseNet-121" de ese mismo documento, y en deta
 
 | Documento | Contenido |
 |---|---|
-| `6_documentacion/Documentacion_Tecnica_10_Modelos.docx` | Metodología en 8 etapas (datos, partición 5-fold, modelos, arquitectura del sistema, entrenamiento, evaluación, matriz pooled, comparación y selección), glosario de fórmulas (incluye OOF y pooled) y detalle de cada modelo por epoch, fold, ROC y cálculo pooled |
+| `6_documentacion/Documentacion_Tecnica_10_Modelos.docx` | Metodología en 7 etapas (datos, preparación de folds y modelos, entrenamiento, evaluación, resultados, comparación y documentación), glosario de fórmulas (incluye OOF y pooled) y detalle de cada modelo por epoch, fold, ROC y cálculo pooled |
 | `6_documentacion/Sustento_Seleccion_Modelos.docx` | Criterios de selección de ViT-Base/16 y DenseNet-121 |
-| `Tabla_Mendeley_10_Modelos_ViT_DenseNet.docx` | Tabla comparativa de los 10 modelos con los 2 elegidos resaltados |
+| `6_documentacion/Tabla_Mendeley_10_Modelos_ViT_DenseNet.docx` | Tabla comparativa de los 10 modelos con los 2 elegidos resaltados |
 
 La evaluación cross-dataset (Trucha y Rohu) de los 2 modelos elegidos, con indicadores TRD, Gap y
-RBE, está en el repo `Generalizacion_ViT_DenseNet` (`Documentacion_Tecnica_ViT_DenseNet.docx`, con la
+RBE, está en el repo `Generalizacion_ViT_DenseNet` (`6_documentacion/Documentacion_Tecnica_ViT_DenseNet.docx`, con la
 misma estructura que la documentación técnica de este repo).
 
 ## Contenido
 
 | Carpeta | Contenido |
 |---|---|
-| `1_codigo/` | `config.py`, `dataset_freshness.py`, `dnc_5fold_confmat_roc.py`, `dnc_5fold_full_metrics.py`, `dnc_graficas_organizadas.py`, `metrics.py`, `models.py`, `run_freshness_v3.py`, `generar_arquitectura_sistema.py` — utilidades compartidas y scripts de entrenamiento/evaluación de los 10 modelos |
+| `1_codigo/` | Código del experimento: `config.py`, `dataset_freshness.py`, `dnc_5fold_confmat_roc.py`, `dnc_5fold_full_metrics.py`, `metrics.py`, `models.py`, `run_freshness_v3.py` — entrenamiento y evaluación de los 10 modelos |
 | `2_logs_entrenamiento/` | Logs de la corrida de entrenamiento (5-fold) y de la generación de matrices de confusión/ROC de los 10 modelos |
 | `3_resultados_test_por_modelo/` | Matrices de confusión y curvas ROC (por fold y pooled) de cada uno de los 10 modelos, más `metricas_pooled_por_modelo.csv` y `metricas_por_fold.csv` |
 | `4_graficas/` | Gráficas agregadas: área bajo curva, curvas ROC, matrices de confusión de los 10 modelos |
 | `5_graficas_informe/` | Gráficas usadas en el informe (AUC, F1 y estabilidad, parámetros vs. F1, precisión vs. recall) |
-| `6_documentacion/` | `Documentacion_Tecnica_10_Modelos.docx` (ordenado por las 8 etapas del flujo metodológico, con el cálculo de la matriz pooled de los 10 modelos y el detalle de cada modelo por epoch/fold) y `Sustento_Seleccion_Modelos.docx` (criterios de selección de los 2 modelos elegidos) |
-| `7_graficas_por_modelo/` | Matrices de confusión, curvas ROC y curvas de épocas, una por modelo, para los 10 modelos; `arquitectura_sistema.png` (arquitectura del sistema, sección 1.3 de la documentación técnica, generada con `1_codigo/generar_arquitectura_sistema.py`) |
+| `6_documentacion/` | `Documentacion_Tecnica_10_Modelos.docx` (ordenado por las 7 etapas del flujo metodológico, con el cálculo de la matriz pooled de los 10 modelos y el detalle de cada modelo por epoch/fold), `Sustento_Seleccion_Modelos.docx` (criterios de selección de los 2 modelos elegidos) y `Tabla_Mendeley_10_Modelos_ViT_DenseNet.docx`; `diagramas/` con la arquitectura, sus vistas ampliadas, el flujo metodológico y la vista simple en SVG editable y PNG en alta resolución (`version_anterior/` conserva los diagramas previos) |
+| `7_graficas_por_modelo/` | Matrices de confusión, curvas ROC y curvas de épocas, una por modelo, para los 10 modelos |
+| `utilitarios/` | Scripts que no son parte del experimento: `diagramas/` (genera los diagramas de `6_documentacion/diagramas/`; `version_anterior/` con los generadores previos), `documentacion/` (arma la documentación técnica) y `graficas/` (`dnc_graficas_organizadas.py`) |
 
 ## Entrenamiento y evaluación
 
@@ -84,11 +85,28 @@ python dnc_5fold_full_metrics.py
 # no reentrena -- recarga los 50 checkpoints ya entrenados, 10 modelos x 5 folds)
 python dnc_5fold_confmat_roc.py
 
-# Gráficas finales
-python dnc_graficas_organizadas.py
+# Gráficas finales (utilitario)
+python utilitarios/graficas/dnc_graficas_organizadas.py
 ```
 
 `metrics.py` incluye además funciones de "Dimensión 2 — Robustez ante el Cambio de
 Dominio" (`tasa_retencion_desempeno`, `brecha_error`, `reduccion_brecha_error`) que **no**
 se usan en este experimento — pertenecen a los experimentos cross-dataset (Trucha/Rohu),
 que comparten este mismo archivo de utilidades por ser un solo proyecto de tesis.
+
+## Regenerar diagramas y documentación
+
+Los utilitarios están separados del código del experimento (`1_codigo/`) y no cambian ningún resultado.
+Desde la raíz de este repositorio:
+
+```bash
+python utilitarios/diagramas/generar_diagramas_seleccion_imagenes.py          # diagramas → 6_documentacion/diagramas/
+for t in png svg; do PLANTUML_LIMIT_SIZE=16384 plantuml -t$t -o "$PWD/4_graficas/uml" utilitarios/diagramas/uml/*.puml; done   # UML (brew install plantuml) → 4_graficas/uml/
+uv run --with python-docx python utilitarios/documentacion/agregar_explicaciones_reunion.py
+uv run --with python-docx python ../herramientas_docx/lectura_amigable.py 6_documentacion/Documentacion_Tecnica_10_Modelos.docx
+uv run --with python-docx python ../herramientas_docx/formato_formulas_y_enlaces.py 6_documentacion/Documentacion_Tecnica_10_Modelos.docx
+```
+
+El segundo paso parte de `6_documentacion/Documentacion_Tecnica_10_Modelos.antes_reunion.docx` (respaldo del documento original):
+antes de volver a correrlo, renombrar ese respaldo a `Documentacion_Tecnica_10_Modelos.docx`. `../herramientas_docx/` tiene las piezas
+comunes a los dos repositorios (estilo de diagramas, formato de lectura, fórmulas y enlaces).

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="2100" viewBox="0 0 1500 2100">
+<defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#607f90"/></marker></defs>
+<rect width="1500" height="2100" fill="white"/>
+<text x="750" y="75" text-anchor="middle" font-family="Arial" font-size="42" font-weight="bold" fill="#173c55">Flujo metodológico · Mendeley DNC</text>
+<rect x="95" y="105" width="1310" height="205" rx="22" fill="#f7fafb" stroke="#dd861a" stroke-width="5"/>
+<circle cx="160" cy="171" r="39" fill="#dd861a"/>
+<text x="160" y="185" text-anchor="middle" font-family="Arial" font-size="43" font-weight="bold" fill="white">1</text>
+<text x="225" y="175" font-family="Arial" font-size="38" font-weight="bold" fill="#153e56">Preparación de datos</text>
+<text x="225" y="236" font-family="Arial" font-size="29" fill="#36566a">Lectura de rutas y etiquetas de las 8 000 imágenes.</text>
+<path d="M750 310 V363" stroke="#607f90" stroke-width="5" marker-end="url(#a)"/>
+<rect x="95" y="375" width="1310" height="205" rx="22" fill="#f7fafb" stroke="#c8930b" stroke-width="5"/>
+<circle cx="160" cy="441" r="39" fill="#c8930b"/>
+<text x="160" y="455" text-anchor="middle" font-family="Arial" font-size="43" font-weight="bold" fill="white">2</text>
+<text x="225" y="445" font-family="Arial" font-size="38" font-weight="bold" fill="#153e56">Preparación del experimento</text>
+<text x="225" y="506" font-family="Arial" font-size="29" fill="#36566a">Folds estratificados y configuración de los 10 modelos.</text>
+<path d="M750 580 V633" stroke="#607f90" stroke-width="5" marker-end="url(#a)"/>
+<rect x="95" y="645" width="1310" height="205" rx="22" fill="#f7fafb" stroke="#5154a1" stroke-width="5"/>
+<circle cx="160" cy="711" r="39" fill="#5154a1"/>
+<text x="160" y="725" text-anchor="middle" font-family="Arial" font-size="43" font-weight="bold" fill="white">3</text>
+<text x="225" y="715" font-family="Arial" font-size="38" font-weight="bold" fill="#153e56">Entrenamiento y checkpoint</text>
+<text x="225" y="776" font-family="Arial" font-size="29" fill="#36566a">Entrenar por fold y guardar el mejor F1 de validación.</text>
+<path d="M750 850 V903" stroke="#607f90" stroke-width="5" marker-end="url(#a)"/>
+<rect x="95" y="915" width="1310" height="205" rx="22" fill="#f7fafb" stroke="#a42b69" stroke-width="5"/>
+<circle cx="160" cy="981" r="39" fill="#a42b69"/>
+<text x="160" y="995" text-anchor="middle" font-family="Arial" font-size="43" font-weight="bold" fill="white">4</text>
+<text x="225" y="985" font-family="Arial" font-size="38" font-weight="bold" fill="#153e56">Evaluación sobre test</text>
+<text x="225" y="1046" font-family="Arial" font-size="29" fill="#36566a">Evaluar el test reservado de cada fold.</text>
+<path d="M750 1120 V1173" stroke="#607f90" stroke-width="5" marker-end="url(#a)"/>
+<rect x="95" y="1185" width="1310" height="205" rx="22" fill="#f7fafb" stroke="#a42b69" stroke-width="5"/>
+<circle cx="160" cy="1251" r="39" fill="#a42b69"/>
+<text x="160" y="1265" text-anchor="middle" font-family="Arial" font-size="43" font-weight="bold" fill="white">5</text>
+<text x="225" y="1255" font-family="Arial" font-size="38" font-weight="bold" fill="#153e56">Reunir resultados</text>
+<text x="225" y="1316" font-family="Arial" font-size="29" fill="#36566a">Concatenar predicciones y calcular métricas pooled.</text>
+<path d="M750 1390 V1443" stroke="#607f90" stroke-width="5" marker-end="url(#a)"/>
+<rect x="95" y="1455" width="1310" height="205" rx="22" fill="#f7fafb" stroke="#148f87" stroke-width="5"/>
+<circle cx="160" cy="1521" r="39" fill="#148f87"/>
+<text x="160" y="1535" text-anchor="middle" font-family="Arial" font-size="43" font-weight="bold" fill="white">6</text>
+<text x="225" y="1525" font-family="Arial" font-size="38" font-weight="bold" fill="#153e56">Comparación de modelos</text>
+<text x="225" y="1586" font-family="Arial" font-size="29" fill="#36566a">Comparar F1, AUC, estabilidad y parámetros; seleccionar modelos.</text>
+<path d="M750 1660 V1713" stroke="#607f90" stroke-width="5" marker-end="url(#a)"/>
+<rect x="95" y="1725" width="1310" height="205" rx="22" fill="#f7fafb" stroke="#148f87" stroke-width="5"/>
+<circle cx="160" cy="1791" r="39" fill="#148f87"/>
+<text x="160" y="1805" text-anchor="middle" font-family="Arial" font-size="43" font-weight="bold" fill="white">7</text>
+<text x="225" y="1795" font-family="Arial" font-size="38" font-weight="bold" fill="#153e56">Documentación y trazabilidad</text>
+<text x="225" y="1856" font-family="Arial" font-size="29" fill="#36566a">Integrar resultados, gráficas y registros de ejecución.</text>
+</svg>

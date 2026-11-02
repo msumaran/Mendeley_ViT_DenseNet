@@ -1,0 +1,67 @@
+@startuml uml_componentes_mendeley
+!include ../../../../herramientas_docx/uml/estilo.puml
+title Experimento Mendeley · Diagrama de componentes (UML)
+
+package "Antes del experimento · Seleccionar imágenes" {
+  database "Repositorio Mendeley\n4,390 fotos · 8 especies" as repo
+  component "Dos clases\n(_label_from_folder)" as clases
+  component "Aumento de datos\n(balance_dnc_4k.py)" as aumento
+}
+
+package "Etapa 1 · Preparar datos" {
+  database "Fotos DNC\n8,000 (4,000 + 4,000)" as dnc
+  component "Cargador\n(FreshnessDataset)" as cargador
+}
+
+package "Etapa 2 · Preparar experimento" {
+  component "Dividir en 5 folds\n(StratifiedKFold)" as folds
+  component "Preparar modelos\n(build_model · 10 modelos)" as modelos
+}
+
+package "Etapa 3 · Entrenar" {
+  component "Entrenar\n(dnc_5fold_full_metrics.py)" as entrenar
+  artifact "Mejor versión\n(checkpoint · 50)" as ckpt
+}
+
+package "Etapa 4 · Evaluar" {
+  component "Examen con test\n(infer)" as examen
+}
+
+package "Etapa 5 · Reunir resultados" {
+  component "Reunir 5 folds\n(compute_metrics)" as reunir
+  artifact "Tablas (CSV)" as tablas
+  artifact "Gráficas\n(matrices · ROC · épocas)" as graficas
+}
+
+package "Etapas 6 y 7 · Comparar y documentar" {
+  component "Comparar 10 modelos" as comparar
+  artifact "Documentación" as doc
+}
+
+artifact "Registros de ejecución\n(2_logs_entrenamiento/)" as logs
+
+repo --> clases : 4,390 fotos
+clases --> aumento : 2 clases
+aumento --> dnc : 8,000 fotos
+dnc --> cargador : leer
+cargador --> folds : ruta y clase
+folds --> entrenar : entrenamiento\ny validación
+modelos --> entrenar : modelo
+folds --> examen : test (20 %)
+entrenar --> ckpt : guarda la mejor
+ckpt --> examen : cargar
+examen --> reunir : respuestas
+reunir --> tablas : guardar
+tablas --> graficas : datos
+tablas --> comparar : métricas
+comparar --> doc : comparación
+graficas --> doc : figuras
+entrenar ..> logs : registro por época
+examen ..> logs : registro del examen
+logs ..> doc : respaldo
+
+legend bottom
+  Caja con pestañas: componente (programa o función). Cilindro: conjunto de fotos. Hoja: archivo guardado.
+  Flecha continua: paso de datos. Flecha punteada: registro que se guarda o se consulta.
+endlegend
+@enduml
