@@ -138,7 +138,8 @@ def main():
         print(f"  epoch {epoch + 1:3d}/{V3_CFG['num_epochs']}  val_F1={vm['macro_f1']:.2f}  "
               f"best={best_val_f1:.2f}  pat={patience}  ({time.time() - t0:.0f}s)", flush=True)
 
-        if patience >= V3_CFG["early_stop_patience"]:
+        # SIN_PACIENCIA=1: corre los 30 epochs completos, sin early stopping.
+        if patience >= V3_CFG["early_stop_patience"] and os.environ.get("SIN_PACIENCIA") != "1":
             print(f"  Early stop at epoch {epoch + 1}", flush=True)
             break
 
