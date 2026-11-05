@@ -37,7 +37,7 @@
 <text x="3626" y="220" font-family="Arial,Helvetica,sans-serif" font-size="25" font-weight="700" fill="#fff" text-anchor="middle">Documentar</text>
 <rect x="60" y="300" width="360" height="270" rx="16" fill="#ffffff" stroke="#6b7f8a" stroke-width="4"/>
 <path d="M60 316 Q60 300 76 300 H404 Q420 300 420 316 V362 H60 Z" fill="#6b7f8a"/>
-<text x="80" y="343" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">Repositorio Mendeley</text>
+<text x="80" y="343" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">1. Repositorio Mendeley</text>
 <text x="80" y="402" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">4,390 fotos de ojos</text>
 <text x="80" y="438" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">8 especies</text>
 <text x="80" y="474" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">3 estados de frescura</text>
@@ -47,7 +47,7 @@
 <text x="404" y="552" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#6b7f8a" text-anchor="end">dataset</text>
 <rect x="60" y="650" width="360" height="270" rx="16" fill="#ffffff" stroke="#6b7f8a" stroke-width="4"/>
 <path d="M60 666 Q60 650 76 650 H404 Q420 650 420 666 V712 H60 Z" fill="#6b7f8a"/>
-<text x="80" y="693" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">Dos clases</text>
+<text x="80" y="693" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">2. Dos clases</text>
 <text x="80" y="752" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Muy fresco + fresco</text>
 <text x="80" y="788" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">→ fresco: 3,084</text>
 <text x="80" y="824" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">No fresco: 1,306</text>
@@ -55,7 +55,7 @@
 <text x="404" y="902" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#6b7f8a" text-anchor="end">función</text>
 <rect x="60" y="1000" width="360" height="270" rx="16" fill="#ffffff" stroke="#6b7f8a" stroke-width="4"/>
 <path d="M60 1016 Q60 1000 76 1000 H404 Q420 1000 420 1016 V1062 H60 Z" fill="#6b7f8a"/>
-<text x="80" y="1043" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">Aumento de datos</text>
+<text x="80" y="1043" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">3. Aumento de datos</text>
 <text x="80" y="1102" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Fresco: +916 → 4,000</text>
 <text x="80" y="1138" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">No fresco: +2,694 → 4,000</text>
 <text x="80" y="1174" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Volteo, giro, brillo,</text>
@@ -66,7 +66,7 @@
 <text x="404" y="1252" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#6b7f8a" text-anchor="end">componente</text>
 <rect x="540" y="300" width="360" height="270" rx="16" fill="#ffffff" stroke="#dd861a" stroke-width="4"/>
 <path d="M540 316 Q540 300 556 300 H884 Q900 300 900 316 V362 H540 Z" fill="#dd861a"/>
-<text x="560" y="343" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">Fotos DNC</text>
+<text x="560" y="343" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">4. Fotos DNC</text>
 <text x="560" y="402" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">8,000 fotos</text>
 <text x="560" y="438" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">4,000 fresco</text>
 <text x="560" y="474" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">4,000 no fresco</text>
@@ -76,7 +76,7 @@
 <text x="884" y="552" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#dd861a" text-anchor="end">dataset</text>
 <rect x="540" y="650" width="360" height="270" rx="16" fill="#ffffff" stroke="#dd861a" stroke-width="4"/>
 <path d="M540 666 Q540 650 556 650 H884 Q900 650 900 666 V712 H540 Z" fill="#dd861a"/>
-<text x="560" y="693" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">Cargador</text>
+<text x="560" y="693" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">5. Cargador</text>
 <text x="560" y="752" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Anota ruta y clase</text>
 <text x="560" y="788" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Abre las fotos por lotes</text>
 <text x="560" y="824" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Ajusta tamaño y color</text>
@@ -86,7 +86,7 @@
 <text x="884" y="902" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#dd861a" text-anchor="end">componente</text>
 <rect x="1020" y="300" width="360" height="270" rx="16" fill="#ffffff" stroke="#c8930b" stroke-width="4"/>
 <path d="M1020 316 Q1020 300 1036 300 H1364 Q1380 300 1380 316 V362 H1020 Z" fill="#c8930b"/>
-<text x="1040" y="343" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">Dividir en 5 folds</text>
+<text x="1040" y="343" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">6. Dividir en 5 folds</text>
 <text x="1040" y="402" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">En cada fold:</text>
 <text x="1040" y="438" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">entrenamiento 68 %</text>
 <text x="1040" y="474" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">validación 12 % · test 20 %</text>
@@ -94,7 +94,7 @@
 <text x="1364" y="552" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#c8930b" text-anchor="end">función</text>
 <rect x="1020" y="650" width="360" height="270" rx="16" fill="#ffffff" stroke="#c8930b" stroke-width="4"/>
 <path d="M1020 666 Q1020 650 1036 650 H1364 Q1380 650 1380 666 V712 H1020 Z" fill="#c8930b"/>
-<text x="1040" y="693" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">Preparar modelos</text>
+<text x="1040" y="693" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">7. Preparar modelos</text>
 <text x="1040" y="752" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">10 modelos preentrenados</text>
 <text x="1040" y="788" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">3 Transformers</text>
 <text x="1040" y="824" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">7 CNN</text>
@@ -104,7 +104,7 @@
 <text x="1364" y="902" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#c8930b" text-anchor="end">componente</text>
 <rect x="1500" y="300" width="360" height="270" rx="16" fill="#ffffff" stroke="#5154a1" stroke-width="4"/>
 <path d="M1500 316 Q1500 300 1516 300 H1844 Q1860 300 1860 316 V362 H1500 Z" fill="#5154a1"/>
-<text x="1520" y="343" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">Mejor versión</text>
+<text x="1520" y="343" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">9. Mejor versión</text>
 <text x="1520" y="402" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Checkpoint con mejor F1</text>
 <text x="1520" y="438" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">1 por modelo y fold</text>
 <text x="1520" y="474" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">50 en total</text>
@@ -113,17 +113,17 @@
 <text x="1844" y="552" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#5154a1" text-anchor="end">archivo</text>
 <rect x="1500" y="650" width="360" height="270" rx="16" fill="#ffffff" stroke="#5154a1" stroke-width="4"/>
 <path d="M1500 666 Q1500 650 1516 650 H1844 Q1860 650 1860 666 V712 H1500 Z" fill="#5154a1"/>
-<text x="1520" y="693" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">Entrenar</text>
-<text x="1520" y="752" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Hasta 30 épocas</text>
+<text x="1520" y="693" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">8. Entrenar</text>
+<text x="1520" y="752" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">30 épocas por fold</text>
 <text x="1520" y="788" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Mide el F1 en validación</text>
-<text x="1520" y="824" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Para tras 7 sin mejorar</text>
+<text x="1520" y="824" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Guarda la mejor</text>
 <rect x="1715.0" y="884" width="18" height="22" rx="2" fill="#ffffff" stroke="#5154a1" stroke-width="2.5"/>
 <rect x="1709.0" y="888" width="11" height="5" rx="1" fill="#ffffff" stroke="#5154a1" stroke-width="2.5"/>
 <rect x="1709.0" y="897" width="11" height="5" rx="1" fill="#ffffff" stroke="#5154a1" stroke-width="2.5"/>
 <text x="1844" y="902" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#5154a1" text-anchor="end">componente</text>
 <rect x="1980" y="300" width="360" height="270" rx="16" fill="#ffffff" stroke="#a42b69" stroke-width="4"/>
 <path d="M1980 316 Q1980 300 1996 300 H2324 Q2340 300 2340 316 V362 H1980 Z" fill="#a42b69"/>
-<text x="2000" y="343" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">Examen con test</text>
+<text x="2000" y="343" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">10. Examen con test</text>
 <text x="2000" y="402" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Fotos que el modelo</text>
 <text x="2000" y="438" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">nunca vio (20 %)</text>
 <text x="2000" y="474" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Una sola evaluación</text>
@@ -133,7 +133,7 @@
 <text x="2324" y="552" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#a42b69" text-anchor="end">componente</text>
 <rect x="2460" y="300" width="360" height="270" rx="16" fill="#ffffff" stroke="#a42b69" stroke-width="4"/>
 <path d="M2460 316 Q2460 300 2476 300 H2804 Q2820 300 2820 316 V362 H2460 Z" fill="#a42b69"/>
-<text x="2480" y="343" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">Reunir 5 folds</text>
+<text x="2480" y="343" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">11. Reunir 5 folds</text>
 <text x="2480" y="402" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">8,000 respuestas</text>
 <text x="2480" y="438" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">por modelo</text>
 <text x="2480" y="474" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Matriz · F1 · AUC</text>
@@ -141,7 +141,7 @@
 <text x="2804" y="552" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#a42b69" text-anchor="end">función</text>
 <rect x="2460" y="650" width="360" height="270" rx="16" fill="#ffffff" stroke="#a42b69" stroke-width="4"/>
 <path d="M2460 666 Q2460 650 2476 650 H2804 Q2820 650 2820 666 V712 H2460 Z" fill="#a42b69"/>
-<text x="2480" y="693" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">Tablas</text>
+<text x="2480" y="693" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">12. Tablas</text>
 <text x="2480" y="752" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Métricas por fold</text>
 <text x="2480" y="788" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">y del total (CSV)</text>
 <path d="M2702.6 883 H2714.6 L2721.6 890 V907 H2702.6 Z" fill="#ffffff" stroke="#a42b69" stroke-width="2.5"/>
@@ -149,7 +149,7 @@
 <text x="2804" y="902" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#a42b69" text-anchor="end">archivo</text>
 <rect x="2460" y="1000" width="360" height="270" rx="16" fill="#ffffff" stroke="#a42b69" stroke-width="4"/>
 <path d="M2460 1016 Q2460 1000 2476 1000 H2804 Q2820 1000 2820 1016 V1062 H2460 Z" fill="#a42b69"/>
-<text x="2480" y="1043" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">Gráficas</text>
+<text x="2480" y="1043" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">13. Gráficas</text>
 <text x="2480" y="1102" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Matrices de confusión</text>
 <text x="2480" y="1138" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Curvas ROC</text>
 <text x="2480" y="1174" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Curvas por época</text>
@@ -158,7 +158,7 @@
 <text x="2804" y="1252" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#a42b69" text-anchor="end">archivo</text>
 <rect x="2940" y="300" width="360" height="270" rx="16" fill="#ffffff" stroke="#148f87" stroke-width="4"/>
 <path d="M2940 316 Q2940 300 2956 300 H3284 Q3300 300 3300 316 V362 H2940 Z" fill="#148f87"/>
-<text x="2960" y="343" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">Comparar 10 modelos</text>
+<text x="2960" y="343" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">14. Comparar 10 modelos</text>
 <text x="2960" y="402" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">F1 y AUC</text>
 <text x="2960" y="438" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Estabilidad entre folds</text>
 <text x="2960" y="474" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Tamaño del modelo</text>
@@ -166,7 +166,7 @@
 <text x="3284" y="552" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#148f87" text-anchor="end">función</text>
 <rect x="3420" y="650" width="360" height="270" rx="16" fill="#ffffff" stroke="#148f87" stroke-width="4"/>
 <path d="M3420 666 Q3420 650 3436 650 H3764 Q3780 650 3780 666 V712 H3420 Z" fill="#148f87"/>
-<text x="3440" y="693" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">Documentación</text>
+<text x="3440" y="693" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#fff" text-anchor="start">15. Documentación</text>
 <text x="3440" y="752" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">Comparación, gráficas</text>
 <text x="3440" y="788" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">y registros</text>
 <text x="3440" y="824" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="400" fill="#1d3445" text-anchor="start">en este documento</text>
@@ -194,7 +194,7 @@
 <path d="M1533 1359 H1545" stroke="#4a5d70" stroke-width="2.5"/>
 <path d="M1533 1364 H1545" stroke="#4a5d70" stroke-width="2.5"/>
 <path d="M1533 1369 H1545" stroke="#4a5d70" stroke-width="2.5"/>
-<text x="1566" y="1375" font-family="Arial,Helvetica,sans-serif" font-size="25" font-weight="700" fill="#33475b" text-anchor="start">Registros de ejecución (registro)</text>
+<text x="1566" y="1375" font-family="Arial,Helvetica,sans-serif" font-size="25" font-weight="700" fill="#33475b" text-anchor="start">16. Registros de ejecución (registro)</text>
 <text x="1566" y="1412" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="400" fill="#4a5d70" text-anchor="start">Entrenamiento época por época y examen de cada fold: respaldan cada número del documento</text>
 <path d="M1680 920 L1680 1330" fill="none" stroke="#5f7a89" stroke-width="4" stroke-dasharray="14 10" marker-end="url(#m5f7a89)"/>
 <path d="M2160 570 L2160 1330" fill="none" stroke="#5f7a89" stroke-width="4" stroke-dasharray="14 10" marker-end="url(#m5f7a89)"/>
@@ -207,21 +207,21 @@
 <rect x="227" y="1591" width="18" height="22" rx="2" fill="#ffffff" stroke="#33475b" stroke-width="2.5"/>
 <rect x="221" y="1595" width="11" height="5" rx="1" fill="#ffffff" stroke="#33475b" stroke-width="2.5"/>
 <rect x="221" y="1604" width="11" height="5" rx="1" fill="#ffffff" stroke="#33475b" stroke-width="2.5"/>
-<text x="254" y="1610" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="400" fill="#33475b" text-anchor="start">componente: programa que hace una tarea</text>
-<text x="741.07" y="1611" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" font-style="italic" fill="#33475b" text-anchor="middle">ƒ</text>
-<text x="762" y="1610" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="400" fill="#33475b" text-anchor="start">función: paso de cálculo dentro de un programa</text>
-<path d="M1316.0500000000002 1594 V1610 A11 4 0 0 0 1338.0500000000002 1610 V1594" fill="#ffffff" stroke="#33475b" stroke-width="2.5"/>
-<ellipse cx="1327.0500000000002" cy="1594" rx="11" ry="4" fill="#ffffff" stroke="#33475b" stroke-width="2.5"/>
-<path d="M1316.0500000000002 1602 A11 4 0 0 0 1338.0500000000002 1602" fill="none" stroke="#33475b" stroke-width="2.5"/>
-<text x="1348" y="1610" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="400" fill="#33475b" text-anchor="start">dataset: conjunto de fotos</text>
-<path d="M1681.4300000000003 1590 H1693.4300000000003 L1700.4300000000003 1597 V1614 H1681.4300000000003 Z" fill="#ffffff" stroke="#33475b" stroke-width="2.5"/>
-<path d="M1693.4300000000003 1590 V1597 H1700.4300000000003" fill="none" stroke="#33475b" stroke-width="2.5"/>
-<text x="1711" y="1610" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="400" fill="#33475b" text-anchor="start">archivo: resultado guardado (modelo, tabla, gráfica)</text>
-<rect x="2333.1900000000005" y="1590" width="20" height="24" rx="2" fill="#ffffff" stroke="#33475b" stroke-width="2.5"/>
-<path d="M2337.1900000000005 1596 H2349.1900000000005" stroke="#33475b" stroke-width="2.5"/>
-<path d="M2337.1900000000005 1601 H2349.1900000000005" stroke="#33475b" stroke-width="2.5"/>
-<path d="M2337.1900000000005 1606 H2349.1900000000005" stroke="#33475b" stroke-width="2.5"/>
-<text x="2364" y="1610" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="400" fill="#33475b" text-anchor="start">registro: logs de ejecución</text>
+<text x="254" y="1610" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="400" fill="#33475b" text-anchor="start">componente: script que hace una tarea</text>
+<text x="718.81" y="1611" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" font-style="italic" fill="#33475b" text-anchor="middle">ƒ</text>
+<text x="740" y="1610" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="400" fill="#33475b" text-anchor="start">función: paso de cálculo dentro de un script</text>
+<path d="M1271.53 1594 V1610 A11 4 0 0 0 1293.53 1610 V1594" fill="#ffffff" stroke="#33475b" stroke-width="2.5"/>
+<ellipse cx="1282.53" cy="1594" rx="11" ry="4" fill="#ffffff" stroke="#33475b" stroke-width="2.5"/>
+<path d="M1271.53 1602 A11 4 0 0 0 1293.53 1602" fill="none" stroke="#33475b" stroke-width="2.5"/>
+<text x="1304" y="1610" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="400" fill="#33475b" text-anchor="start">dataset: conjunto de fotos</text>
+<path d="M1636.9099999999999 1590 H1648.9099999999999 L1655.9099999999999 1597 V1614 H1636.9099999999999 Z" fill="#ffffff" stroke="#33475b" stroke-width="2.5"/>
+<path d="M1648.9099999999999 1590 V1597 H1655.9099999999999" fill="none" stroke="#33475b" stroke-width="2.5"/>
+<text x="1667" y="1610" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="400" fill="#33475b" text-anchor="start">archivo: resultado guardado (modelo, tabla, gráfica)</text>
+<rect x="2288.67" y="1590" width="20" height="24" rx="2" fill="#ffffff" stroke="#33475b" stroke-width="2.5"/>
+<path d="M2292.67 1596 H2304.67" stroke="#33475b" stroke-width="2.5"/>
+<path d="M2292.67 1601 H2304.67" stroke="#33475b" stroke-width="2.5"/>
+<path d="M2292.67 1606 H2304.67" stroke="#33475b" stroke-width="2.5"/>
+<text x="2320" y="1610" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="400" fill="#33475b" text-anchor="start">registro: logs de ejecución</text>
 <rect x="247" y="605" width="94" height="30" rx="6" fill="#ffffff" fill-opacity="0.95"/>
 <text x="254" y="626" font-family="Arial,Helvetica,sans-serif" font-size="19" font-weight="700" fill="#6b7f8a" text-anchor="start">agrupar</text>
 <rect x="247" y="955" width="117" height="30" rx="6" fill="#ffffff" fill-opacity="0.95"/>

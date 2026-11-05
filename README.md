@@ -13,18 +13,18 @@ Ordenado por F1. F1 por fold = media ± std (n=5 folds, ddof=1). Fuente:
 
 | Modelo | Accuracy (%) | F1 pooled (%) | F1 por fold (%) | AUC |
 |---|---|---|---|---|
-| **ViT-Base/16** | 96.96 | 96.96 | 96.96 ± 0.28 | 0.9900 |
+| **ViT-Base/16** | 97.04 | 97.04 | 97.04 ± 0.18 | 0.9895 |
 | **DenseNet-121** | 95.66 | 95.66 | 95.66 ± 0.79 | 0.9906 |
-| Swin-Base | 95.56 | 95.56 | 95.56 ± 0.80 | 0.9889 |
+| Swin-Base | 95.62 | 95.62 | 95.62 ± 0.74 | 0.9891 |
 | DINOv2 ViT-S/14 | 95.44 | 95.44 | 95.44 ± 0.74 | 0.9860 |
 | EfficientNet-B0 | 94.27 | 94.27 | 94.27 ± 0.59 | 0.9859 |
-| EfficientNet-Lite0 | 91.02 | 91.02 | 91.02 ± 1.38 | 0.9700 |
+| EfficientNet-Lite0 | 91.24 | 91.24 | 91.24 ± 1.13 | 0.9719 |
 | MobileNetV3-Small | 90.66 | 90.66 | 90.66 ± 1.49 | 0.9706 |
 | ResNet-50 | 89.06 | 89.06 | 89.06 ± 0.99 | 0.9593 |
 | MobileNetV2 | 89.01 | 89.01 | 89.01 ± 0.17 | 0.9591 |
 | MobileNetV1 | 89.00 | 89.00 | 89.00 ± 1.63 | 0.9556 |
 
-- ViT-Base/16 tiene el mayor F1 (96.96%) y DenseNet-121 el mayor AUC (0.9906).
+- ViT-Base/16 tiene el mayor F1 (97.04%) y DenseNet-121 el mayor AUC (0.9906).
 - Los 4 mejores quedan entre 95.4% y 97.0% de F1; los 6 restantes, entre 89.0% y 94.3%.
 - Dataset balanceado, por eso accuracy ≈ F1 ≈ recall ≈ especificidad.
 
@@ -36,7 +36,7 @@ a **2 modelos: ViT-Base/16 y DenseNet-121** — se descartan Swin-Base y Efficie
 la selección activa del proyecto.
 
 Los 10 modelos y sus resultados completos se conservan sin cambios en todas las carpetas
-de este repositorio (ningún número se recalculó ni se volvió a entrenar) — se conserva
+de este repositorio — se conserva
 todo el experimento de los 10 modelos por trazabilidad, y el documento
 [`6_documentacion/Tabla_Mendeley_10_Modelos_ViT_DenseNet.docx`](6_documentacion/Tabla_Mendeley_10_Modelos_ViT_DenseNet.docx)
 es la versión actualizada de la tabla comparativa con solo ViT-Base/16 y
@@ -64,7 +64,7 @@ misma estructura que la documentación técnica de este repo).
 | Carpeta | Contenido |
 |---|---|
 | `1_codigo/` | Código del experimento: `config.py`, `dataset_freshness.py`, `dnc_5fold_confmat_roc.py`, `dnc_5fold_full_metrics.py`, `metrics.py`, `models.py`, `run_freshness_v3.py` — entrenamiento y evaluación de los 10 modelos |
-| `2_logs_entrenamiento/` | Logs de la corrida de entrenamiento (5-fold) y de la generación de matrices de confusión/ROC de los 10 modelos |
+| `2_logs_entrenamiento/` | Logs de la corrida de entrenamiento (5-fold, incluidos los `completar_30ep_*.log`) y de la generación de matrices de confusión/ROC de los 10 modelos |
 | `3_resultados_test_por_modelo/` | Matrices de confusión y curvas ROC (por fold y pooled) de cada uno de los 10 modelos, más `metricas_pooled_por_modelo.csv` y `metricas_por_fold.csv` |
 | `4_graficas/` | Gráficas agregadas: área bajo curva, curvas ROC, matrices de confusión de los 10 modelos |
 | `5_graficas_informe/` | Gráficas usadas en el informe (AUC, F1 y estabilidad, parámetros vs. F1, precisión vs. recall) |
@@ -75,7 +75,7 @@ misma estructura que la documentación técnica de este repo).
 ## Entrenamiento y evaluación
 
 ```bash
-# Entrenamiento (5-fold, 30 épocas, early_stop_patience=7), los 10 modelos
+# Entrenamiento (5-fold, 30 épocas), logs en 2_logs_entrenamiento/, los 10 modelos
 python run_freshness_v3.py
 
 # Evaluación completa por fold

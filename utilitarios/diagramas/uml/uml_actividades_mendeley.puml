@@ -27,7 +27,7 @@ repeat :Tomar el siguiente de los 10 modelos;
           :Guardar checkpoint (mejor versión);
         else (no)
         endif
-      repeat while (¿menos de 7 épocas sin mejora\ny menos de 30 épocas?) is (sí) not (no)
+      repeat while (¿menos de 30 épocas?) is (sí) not (no)
     }
     partition "Etapa 4 · Evaluar" {
       :Cargar la mejor versión;

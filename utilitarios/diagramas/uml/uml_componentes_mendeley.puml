@@ -61,7 +61,7 @@ examen ..> logs : registro del examen
 logs ..> doc : respaldo
 
 legend bottom
-  Caja con pestañas: componente (programa o función). Cilindro: conjunto de fotos. Hoja: archivo guardado.
+  Caja con pestañas: componente (script o función). Cilindro: conjunto de fotos. Hoja: archivo guardado.
   Flecha continua: paso de datos. Flecha punteada: registro que se guarda o se consulta.
 endlegend
 @enduml

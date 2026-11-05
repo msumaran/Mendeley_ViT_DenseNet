@@ -50,7 +50,7 @@
 <text x="2260.0" y="274" font-family="Arial,Helvetica,sans-serif" font-size="38" font-weight="700" fill="#fff" text-anchor="middle">6</text>
 <text x="2260.0" y="360" font-family="Arial,Helvetica,sans-serif" font-size="33" font-weight="700" fill="#17394d" text-anchor="middle">Elegir</text>
 <text x="2260.0" y="430" font-family="Arial,Helvetica,sans-serif" font-size="36" font-weight="700" fill="#b8860b" text-anchor="middle">2 modelos</text>
-<text x="2260.0" y="504" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">ViT-Base/16 (96.96 %)</text>
+<text x="2260.0" y="504" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">ViT-Base/16 (97.04 %)</text>
 <text x="2260.0" y="538" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">DenseNet-121 (95.66 %)</text>
 <text x="2260.0" y="572" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#3d5566" text-anchor="middle">uno de cada familia</text>
 </svg>

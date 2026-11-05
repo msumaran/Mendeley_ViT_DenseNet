@@ -314,26 +314,26 @@ QUE_SE_HACE = {
 # Nota interna del autor (resumen informal; no reemplaza la explicación del documento)
 ETAPAS = {
     "1.1 Etapa 1": "El proyecto busca detectar si una trucha está fresca a partir de la foto de su ojo. En "
-                   "este primer experimento los programas aprenden con un conjunto más grande: 4,390 fotos de "
+                   "este primer experimento los modelos aprenden con un conjunto más grande: 4,390 fotos de "
                    "ojos de 8 especies, agrupadas en fresco y no fresco. Como había muchas más fotos frescas "
                    "que no frescas, se generaron copias con pequeños cambios (giros, volteos, brillo) hasta "
                    "tener 4,000 de cada clase, para que ambas tengan el mismo peso.",
     "1.2 Etapa 2": "Las 8,000 fotos se reparten en 5 lotes, cada uno con la misma proporción de fresco y no "
                    "fresco. En cada ronda, un lote se reserva para la evaluación final y los otros cuatro se "
                    "usan para aprender; así, cada foto se evalúa una sola vez. También se preparan los 10 "
-                   "programas a comparar, que ya vienen entrenados para reconocer imágenes en general.",
-    "1.3 Etapa 3": "Cada programa aprende a distinguir fresco de no fresco revisando las fotos de entrenamiento "
+                   "modelos a comparar, que ya vienen entrenados para reconocer imágenes en general.",
+    "1.3 Etapa 3": "Cada modelo aprende a distinguir fresco de no fresco revisando las fotos de entrenamiento "
                    "varias veces. Después de cada revisión se mide su resultado con un grupo de fotos aparte. "
                    "Si mejora, se guarda esa versión; si pasan 7 revisiones seguidas sin mejora, se detiene. "
                    "El máximo es de 30 revisiones.",
-    "1.4 Etapa 4": "La mejor versión guardada de cada programa clasifica el lote reservado, con fotos que "
+    "1.4 Etapa 4": "El checkpoint de cada modelo clasifica el lote reservado, con fotos que "
                    "nunca vio durante el aprendizaje. Esta evaluación se hace una sola vez y muestra si el "
-                   "programa reconoce la frescura en fotos nuevas, y no solo en las que ya conocía.",
+                   "modelo reconoce la frescura en fotos nuevas, y no solo en las que ya conocía.",
     "1.5 Etapa 5": "Se juntan los resultados de los 5 lotes. Como cada foto se evaluó una sola vez, se obtiene "
-                   "una respuesta del programa para cada una de las 8,000 fotos. Con eso se cuentan los "
+                   "una respuesta del modelo para cada una de las 8,000 fotos. Con eso se cuentan los "
                    "aciertos y los errores en fresco y en no fresco, y se calcula el puntaje final de cada "
-                   "programa.",
-    "1.6 Etapa 6": "Se comparan los 10 programas por su puntaje, por qué tan estables fueron sus resultados "
+                   "modelo.",
+    "1.6 Etapa 6": "Se comparan los 10 modelos por su puntaje, por qué tan estables fueron sus resultados "
                    "entre los 5 lotes y por su tamaño. Se eligen los dos mejores, uno de cada tipo: "
                    "ViT-Base/16 (96.96) y DenseNet-121 (95.66). Estos dos se prueban después con Trucha y "
                    "Rohu.",
@@ -500,7 +500,7 @@ CONCEPTOS = [
     ("Concepto", "En palabras simples", "Más detalle"),
     ("Clasificación fresco / no fresco", "El modelo mira la foto del ojo del pescado y responde una de dos "
      "opciones: fresco o no fresco.", "1.1"),
-    ("Modelo (CNN y Transformer)", "Programa que aprende a reconocer patrones en imágenes a partir de "
+    ("Modelo (CNN y Transformer)", "Sistema que aprende a reconocer patrones en imágenes a partir de "
      "ejemplos. Se probaron dos familias: las CNN (redes convolucionales) y los Transformers.", "1.2.2"),
     ("Entrenamiento, validación y test", "Como estudiar, hacer prácticas y rendir el examen final: el modelo "
      "aprende con el entrenamiento (68 % de las fotos), se mide su avance con la validación (12 %) y al "
@@ -754,7 +754,7 @@ def actualizar():
     cur.p("El diagrama se lee de izquierda a derecha: primero la selección y el balanceo de las imágenes, "
           "después las siete etapas. La flecha continua es paso de datos y "
           "la punteada, un registro que se guarda o se consulta. El ícono de cada caja indica su tipo: "
-          "componente (programa que hace una tarea), función (paso de cálculo), dataset (conjunto "
+          "componente (script que hace una tarea), función (paso de cálculo), dataset (conjunto "
           "de fotos), archivo (resultado guardado) o registro (logs de ejecución).")
     for titulo, texto in ARQUITECTURA:
         cur.p((con_tipo(titulo, TIPO_CAJA), "b"), texto)
@@ -794,19 +794,28 @@ def actualizar():
     cur.table([("Fold", "TP", "FN", "FP", "TN", "F1 macro del fold", "AUC del fold")] +
               [(f"Fold {k}", tp, fn, fp, tn, f1, auc) for k, tp, fn, fp, tn, f1, auc in VIT_FOLDS] +
               [("Suma (pooled)", "3,861", "139", "104", "3,896", "—", "—")], bold_last=True)
-    cur.p("Con esa matriz sumada se obtiene cada columna de la tabla:", shade=False)
+    cur.p("Las columnas de fold salen de la matriz de cada fold; las demás, de la matriz sumada:", shade=False)
     cur.table([
         ("Columna", "Cómo se obtiene", "Cálculo (ViT-Base/16)", "Valor"),
-        ("Accuracy", "Aciertos de la matriz sumada / total", "(3,861 + 3,896) / 8,000 × 100", "96.96"),
-        ("Precisión macro", "Promedio de la precisión de cada clase (matriz sumada)",
+        ("F1 macro del fold", "Promedio del F1 de cada clase, con la matriz de ese fold\n"
+         "F1_fresco = 2TP / (2TP + FP + FN) × 100\nF1_no_fresco = 2TN / (2TN + FN + FP) × 100\n"
+         "F1 macro = (F1_fresco + F1_no_fresco) / 2",
+         "Fold 1:\nF1_fresco = 2×777 / (2×777 + 20 + 23) = 97.31\nF1_no_fresco = 2×780 / (2×780 + 23 + 20) = 97.32\n"
+         "(97.31 + 97.32) / 2", "97.31"),
+        ("AUC del fold", "Área bajo la curva ROC de las 1,600 probabilidades del fold (roc_curve_fold1.csv), "
+                         "no sale de la matriz\nAUC = Σᵢ (FPRᵢ₊₁ − FPRᵢ) × (TPRᵢ₊₁ + TPRᵢ) / 2\n"
+                         "FPR = FP / (FP + TN), TPR = TP / (TP + FN), para cada umbral",
+         "Fold 1: suma de trapecios sobre roc_curve_fold1.csv", "0.9910"),
+        ("Accuracy", "Aciertos de la matriz sumada / total\nAccuracy = (TP + TN) / (TP + FN + FP + TN) × 100", "(3,861 + 3,896) / 8,000 × 100", "96.96"),
+        ("Precisión macro", "Promedio de la precisión de cada clase (matriz sumada)\nPrecisión_fresco = TP / (TP + FP) × 100\nPrecisión_no_fresco = TN / (TN + FN) × 100\nPrecisión macro = (Precisión_fresco + Precisión_no_fresco) / 2",
          "fresco 3,861 / (3,861 + 104) = 97.38\nno fresco 3,896 / (3,896 + 139) = 96.56\n"
          "(97.38 + 96.56) / 2", "96.97"),
-        ("F1 macro (pooled)", "Promedio del F1 de cada clase (matriz sumada)",
-         "(F1_fresco + F1_no_fresco) / 2", "96.96"),
-        ("Desv. std F1", "Desviación estándar muestral (n − 1) de los 5 F1 de fold",
+        ("F1 macro (pooled)", "Promedio del F1 de cada clase (matriz sumada)\nMismas fórmulas de F1, con la matriz sumada",
+         "F1_fresco = 2×3,861 / (2×3,861 + 104 + 139) = 96.95\nF1_no_fresco = 2×3,896 / (2×3,896 + 139 + 104) = 96.98\n(96.95 + 96.98) / 2", "96.96"),
+        ("Desv. std F1", "Desviación estándar muestral (n − 1) de los 5 F1 de fold\ns = √( Σₖ (F1ₖ − media)² / (n − 1) )",
          "stdev(97.31, 96.56, 96.94, 96.87, 97.12)", "0.28"),
         ("AUC (pooled)", "Con las 8,000 probabilidades concatenadas (roc_curve_pooled.csv), no con "
-                         "la matriz", "Área bajo la ROC pooled", "0.9900"),
+                         "la matriz\nMisma fórmula de AUC, con todas las probabilidades", "Área bajo la ROC pooled", "0.9900"),
     ])
     cur.p("El F1 pooled no es el promedio de los F1 de fold, aunque en ViT-Base/16 coinciden (media de "
           "los 5 = 96.96); el AUC pooled tampoco es el promedio de los AUC de fold (sería 0.9901). El "

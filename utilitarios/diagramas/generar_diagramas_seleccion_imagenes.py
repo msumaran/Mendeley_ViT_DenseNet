@@ -6,7 +6,7 @@ Genera en 6_documentacion/diagramas/ (SVG editable + PNG en alta resolución):
   - vista_simple_mendeley: el experimento en 6 pasos, para público general.
 
 Cifras: 4,390 originales (3,084 fresco y 1,306 no fresco), 3,610 aumentadas (balance_dnc_4k.py),
-5 folds, 10 modelos, F1 macro pooled de ViT-Base/16 (96.96) y DenseNet-121 (95.66).
+5 folds, 10 modelos, F1 macro pooled de ViT-Base/16 (97.04) y DenseNet-121 (95.66).
 Uso (desde la raíz del repositorio): python utilitarios/diagramas/generar_diagramas_seleccion_imagenes.py
 """
 import sys
@@ -22,6 +22,8 @@ ANCHO, ALTO = d.X0 + 8 * d.COL, 1640
 
 
 # Tipo de cada caja (ícono del diagrama); la documentación lo usa para nombrar cada componente
+# Orden de lectura: el número de cada caja coincide con la explicación del documento
+ORDEN_CAJAS = ["Repositorio Mendeley", "Dos clases", "Aumento de datos", "Fotos DNC", "Cargador", "Dividir en 5 folds", "Preparar modelos", "Entrenar", "Mejor versión", "Examen con test", "Reunir 5 folds", "Tablas", "Gráficas", "Comparar 10 modelos", "Documentación"]
 TIPO_CAJA = {
     "Repositorio Mendeley": "dataset",
     "Dos clases": "función",
@@ -44,7 +46,7 @@ TIPO_CAJA = {
 def arquitectura():
     L = d.Lienzo(ANCHO, ALTO)
     caja = lambda c, f, color, titulo, lineas, **kw: L.caja(  # noqa: E731
-        c, f, color, titulo, lineas, tipo=TIPO_CAJA.get(titulo), **kw)
+        c, f, color, f"{ORDEN_CAJAS.index(titulo) + 1}. {titulo}", lineas, tipo=TIPO_CAJA.get(titulo), **kw)
     for c in range(8):
         L.panel(c, 1030)
     cabeceras = [(d.GRIS, "ANTES DEL EXPERIMENTO", "Seleccionar imágenes"), (NARANJA, "ETAPA 1", "Preparar datos"),
@@ -64,7 +66,7 @@ def arquitectura():
     caja(2, 0, OCRE, "Dividir en 5 folds", ["En cada fold:", "entrenamiento 68 %", "validación 12 % · test 20 %"])
     caja(2, 1, OCRE, "Preparar modelos", ["10 modelos preentrenados", "3 Transformers", "7 CNN"])
     caja(3, 0, AZUL, "Mejor versión", ["Checkpoint con mejor F1", "1 por modelo y fold", "50 en total"])
-    caja(3, 1, AZUL, "Entrenar", ["Hasta 30 épocas", "Mide el F1 en validación", "Para tras 7 sin mejorar"])
+    caja(3, 1, AZUL, "Entrenar", ["30 épocas por fold", "Mide el F1 en validación", "Guarda la mejor"])
     caja(4, 0, MAGENTA, "Examen con test", ["Fotos que el modelo", "nunca vio (20 %)", "Una sola evaluación"])
     caja(5, 0, MAGENTA, "Reunir 5 folds", ["8,000 respuestas", "por modelo", "Matriz · F1 · AUC"])
     caja(5, 1, MAGENTA, "Tablas", ["Métricas por fold", "y del total (CSV)"])
@@ -113,7 +115,7 @@ def arquitectura():
 
     # Registros (punteado): lo que anota el entrenamiento y el examen; respaldan la documentación
     yb = 1330
-    L.banda(3, 7, yb, 110, "Registros de ejecución", "Entrenamiento época por época y examen de cada fold: "
+    L.banda(3, 7, yb, 110, "16. Registros de ejecución", "Entrenamiento época por época y examen de cada fold: "
                                                       "respaldan cada número del documento")
     L.flecha([(cx(3), abajo(1)), (cx(3), yb)], d.LINEA, True)
     L.etiqueta(cx(3) + 14, abajo(1) + 120, "registro por época", d.LINEA, "start")
@@ -177,7 +179,7 @@ def vista_simple():
          (OCRE, "Dividir", "5 folds", "cada foto se usa\nuna vez como examen"),
          (AZUL, "Entrenar", "10 modelos", "aprenden con las\nmismas fotos y reglas"),
          (MAGENTA, "Examen", "Fotos\nno vistas", "cada modelo clasifica\nfotos que nunca vio"),
-         (d.DORADO, "Elegir", "2 modelos", "ViT-Base/16 (96.96 %)\nDenseNet-121 (95.66 %)\nuno de cada familia")]),
+         (d.DORADO, "Elegir", "2 modelos", "ViT-Base/16 (97.04 %)\nDenseNet-121 (95.66 %)\nuno de cada familia")]),
         OUT, "vista_simple_mendeley")
 
 
